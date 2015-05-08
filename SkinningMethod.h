@@ -1,0 +1,9 @@
+#ifndef SKINNING_METHOD_H
+#define SKINNING_METHOD_H
+enum SkinningMethod
+{
+  SKINNING_METHOD_LBS = 0,
+  SKINNING_METHOD_DQS = 1,
+  NUM_SKINNING_METHODS = 2,
+};
+#endif

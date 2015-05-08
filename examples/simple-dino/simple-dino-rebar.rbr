@@ -1,0 +1,45 @@
+floor: TW_TYPE_BOOLCPP 1
+genie_is_visible: TW_TYPE_BOOLCPP 1
+genie_width: TW_TYPE_INT32 200
+genie_height: TW_TYPE_INT32 200
+ui_on_top: TW_TYPE_BOOLCPP 1
+node_user_scale: TW_TYPE_DOUBLE 1
+auto_scale: TW_TYPE_BOOLCPP 1
+node_drag_along_axis: TW_TYPE_BOOLCPP 1
+node_show_bind: TW_TYPE_BOOLCPP 0
+node_color_parts: TW_TYPE_BOOLCPP 0
+Node_visible: TW_TYPE_BOOLCPP 1
+skeleton_visible: TW_TYPE_BOOLCPP 0
+rig_skeleton_visible: TW_TYPE_BOOLCPP 0
+skel_style: SkeletonStyleType 3d
+control_type: ControlType puppet
+rig_mapping_visible: TW_TYPE_BOOLCPP 1
+drag_arrows_visible: TW_TYPE_BOOLCPP 1
+node_rotation_control_type: RotationControlType axis
+node_rotation_axis_type: RotationAxisType View
+node_draw_numbes: TW_TYPE_BOOLCPP 0
+node_LEDs_visible: TW_TYPE_BOOLCPP 1
+print_lines: TW_TYPE_BOOLCPP 0
+log_lines: TW_TYPE_BOOLCPP 0
+m_color: TW_TYPE_COLOR4F 1 0.894118 0.227451 0.75
+m_alpha: TW_TYPE_FLOAT 0.75
+pick_on_mesh: TW_TYPE_BOOLCPP 0
+skinning_method: SkinningMethodType dqs
+show_window: TW_TYPE_BOOLCPP 0
+pick_s: TW_TYPE_INT32 1
+viewport_0_rotation: TW_TYPE_QUAT4D 0.707106781186548 0 0 0.707106781186548
+viewport_1_rotation: TW_TYPE_QUAT4D 0 0 0 1
+viewport_2_rotation: TW_TYPE_QUAT4D 0 0.707106781186548 0 0.707106781186548
+viewport_3_rotation: TW_TYPE_QUAT4D 0.154907117449997 -0.0539638462241727 -0.00847448692119076 0.986417696179184
+horiz: TW_TYPE_DOUBLE 1
+vert: TW_TYPE_DOUBLE 0
+flash_light_0: TW_TYPE_DIR3F -0.1 -0.1 -1
+scene_light_0: TW_TYPE_DIR3F 0.3 -0.4 -0.7
+scene_light_1: TW_TYPE_DIR3F -0.3 -0.4 -0.7
+auto_fit_activated: TW_TYPE_BOOLCPP 0
+num_vertices: TW_TYPE_INT32 14049
+num_facets: TW_TYPE_INT32 28094
+mesh_invert_orientation: TW_TYPE_BOOLCPP 0
+cpu_lbs: TW_TYPE_BOOLCPP 1
+rotation_type: RotationType two_axis_fixed_up
+

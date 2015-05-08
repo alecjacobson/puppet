@@ -1,0 +1,60 @@
+<NodeTree color_parts="0">
+    <Node max_children="1" type="Root">
+        <radius>0.21</radius>
+        <r_off>       -0  0.707107 -0.707107 -0</r_off>
+        <t_off>-0.0426238 -0.752512 -0.548233</t_off>
+        <drag_arrow_from>    0     0 -0.21</drag_arrow_from>
+        <drag_arrow_to>-0.959528  0.356794 -0.395951</drag_arrow_to>
+        <color>0.270588 0.270588 0.270588 1</color>
+        <ct_off>9.14514e-15 5.38466e-12  -0.0754114</ct_off>
+        <Node max_children="1" type="TBT" parent_id="0">
+            <angle>-20.1105 83.1865 -1.91711</angle>
+            <angle_at_bind>0 0 0</angle_at_bind>
+            <radius>1</radius>
+            <r_off>0 0 0 1</r_off>
+            <t_off> 0  0 -1</t_off>
+            <drag_arrow_from>    0     0 -1.42</drag_arrow_from>
+            <drag_arrow_to>     1.69498 -1.43245e-09     -1.37815</drag_arrow_to>
+            <color>1 0.196078 0 1</color>
+            <ct_off>5.10044e-14 2.53784e-12   0.0793995</ct_off>
+            <Node max_children="1" type="TBT" parent_id="0">
+                <angle>-153.8 92 -25.006</angle>
+                <angle_at_bind>0 0 0</angle_at_bind>
+                <radius>1</radius>
+                <r_off>0 0 0 1</r_off>
+                <t_off> 0  0 -1</t_off>
+                <drag_arrow_from>   0.112016 -0.00467436    -3.41686</drag_arrow_from>
+                <drag_arrow_to> -0.106847 0.00285422   -1.01196</drag_arrow_to>
+                <color>0.6 0.8 0.2 1</color>
+                <ct_off>0 0 0</ct_off>
+                <Node max_children="1" type="TBT" parent_id="0">
+                    <angle>-14.4 92 0</angle>
+                    <angle_at_bind>0 0 0</angle_at_bind>
+                    <radius>1</radius>
+                    <r_off>0 0 0 1</r_off>
+                    <t_off> 0  0 -1</t_off>
+                    <drag_arrow_from>0 0 0</drag_arrow_from>
+                    <color>0 0.19 1 1</color>
+                    <ct_off>-6.01483e-14         0 -0.482791</ct_off>
+                    <Node max_children="1" type="TBT" parent_id="0">
+                        <angle>30.6 92 0</angle>
+                        <angle_at_bind>0 0 0</angle_at_bind>
+                        <radius>1</radius>
+                        <r_off>0 0 0 1</r_off>
+                        <t_off> 0  0 -1</t_off>
+                        <drag_arrow_from>6.93738e-310 6.93738e-310 6.93738e-310</drag_arrow_from>
+                        <color>1 0.411765 0.705882 1</color>
+                        <ct_off> 7.34307e-13 -4.90814e-13     -0.29442</ct_off>
+                        <Node max_children="0" type="EndCap" parent_id="0">
+                            <radius>0.05</radius>
+                            <r_off>0 0 0 1</r_off>
+                            <t_off>    0     0 -0.05</t_off>
+                            <drag_arrow_from>6.93738e-310 6.93738e-310 6.93738e-310</drag_arrow_from>
+                            <color>0.588235 0.588235 0.588235 1</color>
+                        </Node>
+                    </Node>
+                </Node>
+            </Node>
+        </Node>
+    </Node>
+</NodeTree>

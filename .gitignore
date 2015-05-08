@@ -1,0 +1,33 @@
+# use glob syntax.
+syntax: glob
+puppet
+tank
+leg
+wackeldackel
+*.so
+*.so.[0123456789]
+*.so.[0123456789].[0123456789]
+*.o
+*.a
+*.dylib
+*~
+*CMakeFiles*
+.DS_Store
+*tags
+*.exe
+*.pdb
+*.sdf
+*.suo
+*.ilk
+*.log
+*.tlog
+release/
+debug/
+*.orig
+*.user
+*.vsp
+*.opensdf
+*.psess
+*.swp
+*.swo
+lib/

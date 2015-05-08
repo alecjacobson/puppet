@@ -1,0 +1,17 @@
+b  Stop (or restart?) the serial output
+
+l,[id],[rate_r],[rate_g],[rate_b]  Set the each RGB LED to a certain rate in ms
+
+g,[id],[output],[tbt_0],[tbt_1],[tbt_2]  Define the rotation from splitter [id]
+  to its child [output], angles are the theta values of a TBT joint configure
+  to reproduce an identity.
+
+i  Reinitialize
+
+h  Display help menu
+
+s  Get status
+
+o,[id]  Defines the current "zero" angles of a TBT joint.
+
+k  Reset the slaves (a better reinitialize?)

@@ -1,0 +1,15 @@
+camera_rotation: TW_TYPE_QUAT4D 0.00412809441348267 -0.962510083092746 -0.270817359138144 0.0146716314994784
+camera_translation: TW_TYPE_DIR3D -7.105427357601e-15 3.5527136788005e-15 42.190046219458
+camera_at_dist: TW_TYPE_DOUBLE 42.190046219458
+init_vel: TW_TYPE_DOUBLE 15
+gravity: TW_TYPE_DOUBLE 0
+control_type: ControlType mouse
+num_targets: TW_TYPE_INT32 10
+shadows_enabled: TW_TYPE_BOOLCPP 1
+ao_enabled: TW_TYPE_BOOLCPP 1
+light_pos: TW_TYPE_DIR3F 0.7 0.5 -0.2
+print_lines: TW_TYPE_BOOLCPP 0
+log_lines: TW_TYPE_BOOLCPP 0
+rotation_type: RotationType turret
+is_fullscreen: TW_TYPE_BOOLCPP 1
+

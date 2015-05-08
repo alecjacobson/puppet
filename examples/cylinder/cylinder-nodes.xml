@@ -1,0 +1,49 @@
+<NodeTree color_parts="0">
+    <Node max_children="1" type="Root">
+        <radius>0.042</radius>
+        <r_off>-0.511971 0.487752 0.511302 -0.488421</r_off>
+        <t_off>  -0.886519  0.00179439 9.31722e-07</t_off>
+        <drag_arrow_from>  -0.886519  0.00179439 9.31722e-07</drag_arrow_from>
+        <drag_arrow_to>  -0.886519  0.00179423 9.35521e-07</drag_arrow_to>
+        <color>0.270588 0.270588 0.270588 1</color>
+        <ct_off> 4.00142e-14 -6.40227e-13    -0.135318</ct_off>
+        <Node max_children="1" type="TBT" parent_id="0">
+            <angle>0 0 0</angle>
+            <angle_at_bind>0 0 0</angle_at_bind>
+            <radius>0.2</radius>
+            <r_off>0 0 0 1</r_off>
+            <t_off>   0    0 -0.2</t_off>
+            <drag_arrow_from>  -0.509202  0.00229912 1.28217e-05</drag_arrow_from>
+            <color>0.6 0.8 0.2 1</color>
+            <ct_off>       0        0 -0.12283</ct_off>
+            <Node max_children="1" type="TBT" parent_id="0">
+                <angle>88.2 0 0</angle>
+                <angle_at_bind>0 0 0</angle_at_bind>
+                <radius>0.2</radius>
+                <r_off>0 0 0 1</r_off>
+                <t_off>   0    0 -0.2</t_off>
+                <drag_arrow_from> 0.0136274 0.00299851 2.9297e-05</drag_arrow_from>
+                <color>1 0.411765 0.705882 1</color>
+                <ct_off>        0         0 -0.120171</ct_off>
+                <Node max_children="1" type="TBT" parent_id="0">
+                    <angle>0 0 0</angle>
+                    <angle_at_bind>0 0 0</angle_at_bind>
+                    <radius>0.2</radius>
+                    <r_off>0 0 0 1</r_off>
+                    <t_off>   0    0 -0.2</t_off>
+                    <drag_arrow_from>   0.533798  0.00369434 4.56885e-05</drag_arrow_from>
+                    <color>0.0392157 0.313726 1 1</color>
+                    <ct_off>        0         0 -0.141609</ct_off>
+                    <Node max_children="0" type="EndCap" parent_id="0">
+                        <radius>0.01</radius>
+                        <r_off>0 0 0 1</r_off>
+                        <t_off>    0     0 -0.01</t_off>
+                        <drag_arrow_from>   0.885406  0.00416468 5.67683e-05</drag_arrow_from>
+                        <drag_arrow_to>    0.885408   0.00179398 -1.40328e-06</drag_arrow_to>
+                        <color>0.588235 0.588235 0.588235 1</color>
+                    </Node>
+                </Node>
+            </Node>
+        </Node>
+    </Node>
+</NodeTree>

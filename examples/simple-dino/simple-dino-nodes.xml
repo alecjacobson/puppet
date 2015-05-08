@@ -1,0 +1,41 @@
+<NodeTree color_parts="0">
+    <Node max_children="1" type="Root">
+        <radius>0.042</radius>
+        <r_off>0.685039 0.255214 0.150776 0.665472</r_off>
+        <t_off> 0.0879187  -0.107777 -0.0552977</t_off>
+        <drag_arrow_from> 0.0879187  -0.107777 -0.0552977</drag_arrow_from>
+        <drag_arrow_to> 0.0859766  -0.108729 -0.0591783</drag_arrow_to>
+        <color>0.270588 0.270588 0.270588 1</color>
+        <ct_off>        0         0 0.0581241</ct_off>
+        <Node max_children="1" type="TBT" parent_id="0">
+            <angle>-7.34436 -33.9972 18.7372</angle>
+            <angle_at_bind>-7.9596 23.0658 17.0673</angle_at_bind>
+            <radius>0.2</radius>
+            <r_off>0 0 0 1</r_off>
+            <t_off>   0    0 -0.2</t_off>
+            <drag_arrow_from>-0.0125239  0.0457203 -0.0426422</drag_arrow_from>
+            <drag_arrow_to>-0.0108523  0.0462035 -0.0382004</drag_arrow_to>
+            <color>1 0.411765 0.705882 1</color>
+            <ct_off>        0         0 0.0803936</ct_off>
+            <Node max_children="1" type="TBT" parent_id="0">
+                <angle>0.873413 -15.9137 4.16931</angle>
+                <angle_at_bind>-0.335083 -25.1422 -0.55481</angle_at_bind>
+                <radius>0.2</radius>
+                <r_off>0 0 0 1</r_off>
+                <t_off>   0    0 -0.2</t_off>
+                <drag_arrow_from> -0.277954   0.222669 -0.0230412</drag_arrow_from>
+                <drag_arrow_to>  -0.27648   0.223887 -0.0221481</drag_arrow_to>
+                <color>0.0392157 0.313726 1 1</color>
+                <ct_off>        0         0 -0.164699</ct_off>
+                <Node max_children="0" type="EndCap" parent_id="0">
+                    <radius>0.01</radius>
+                    <r_off>0 0 0 1</r_off>
+                    <t_off>    0     0 -0.01</t_off>
+                    <drag_arrow_from> -0.476416   0.539858 -0.0431365</drag_arrow_from>
+                    <drag_arrow_to>  -0.47687   0.539812 -0.0378456</drag_arrow_to>
+                    <color>0.588235 0.588235 0.588235 1</color>
+                </Node>
+            </Node>
+        </Node>
+    </Node>
+</NodeTree>
