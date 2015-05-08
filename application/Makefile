@@ -76,8 +76,8 @@ ifeq ($(UNAME), Linux)
 	BOOST_LIB= -L/usr/local/lib -lboost_system-mt -lboost_program_options-mt
 # Puppet API
 	PUPPET=../../../the-puppet/
-	PUPPET_LIB=-L$(PUPPET)/api/generic/lib -lpuppet_api -L$(PUPPET)/api/unix/lib -lpuppet_serial
-	PUPPET_INC=-I$(PUPPET)/api/unix/include -I$(PUPPET)/api/generic/include -I$(PUPPET) -I$(PUPPET)/api/ftdi/include
+	PUPPET_LIB=-L$(PUPPET)/driver/generic/lib -lpuppet_api -L$(PUPPET)/driver/unix/lib -lpuppet_serial
+	PUPPET_INC=-I$(PUPPET)/driver/unix/include -I$(PUPPET)/driver/generic/include -I$(PUPPET) -I$(PUPPET)/driver/ftdi/include
 # Mosek
 	MOSEKPLATFORM=linux64x86
 	MOSEK=/usr/local/mosek
@@ -96,8 +96,8 @@ else
 	BOOST_LIB= -L/opt/local/lib -lboost_system-mt -lboost_program_options -lboost_program_options-mt
 # Puppet API
 	PUPPET=../../../the-puppet/
-	PUPPET_LIB=-L$(PUPPET)/api/generic/lib -lpuppet_api -L$(PUPPET)/api/ftdi/lib -lpuppet_d2xx_serial
-	PUPPET_INC=-I$(PUPPET)/api/unix/include -I$(PUPPET)/api/generic/include -I$(PUPPET) -I$(PUPPET)/api/ftdi/include
+	PUPPET_LIB=-L$(PUPPET)/driver/generic/lib -lpuppet_api -L$(PUPPET)/driver/ftdi/lib -lpuppet_d2xx_serial
+	PUPPET_INC=-I$(PUPPET)/driver/unix/include -I$(PUPPET)/driver/generic/include -I$(PUPPET) -I$(PUPPET)/driver/ftdi/include
 # FTDI D2XX
 	FTDI=/usr/local/
 	FTDI_LIB=-L$(FTDI)/lib -lftd2xx -lftdi -framework IOKit
@@ -214,7 +214,7 @@ tank: ${build}/obj/tank.o $(OBJ_FILES)
 .PHONY: valgrind_pupskin
 valgrind_pupskin: ${build}/obj/PupSkin.o ${build}/obj/pupskin_test.o
 #$(gg) -o pupskin_test $(AFLAGS) $(CFLAGS) ${build}/obj/pupskin_test.o  $(LIB)
-	g++-mp-4.7 -o pupskin_test  -std=c++11 -g -ggdb -O0 -Wall -Wextra -Wno-reorder -Wno-unknown-pragmas -D_DEBUG -fopenmp -msse4.2 debug/obj/pupskin_test.o  -L/usr/local//lib -lftd2xx -lftdi -L../../../the-puppet//api/generic/lib -lpuppet_api -L../../../the-puppet//api/ftdi/lib -lpuppet_d2xx_serial -L/opt/local/lib -L/usr/local/igl/libigl//external/yimg/ -lyimg -lz -L/usr/X11/lib -lpng -bind_at_load -L/usr/local/igl/libigl//lib -liglpng -ligltetgen -liglmosek -ligl -liglembree -liglbbw -L/usr/local/mosek/7/tools/platform/osx64x86/bin -lmosek64  -L/usr/local/igl/libigl//external/tetgen/ -ltet -L/usr/local/igl/libigl//external/tinyxml2/ -ltinyxml2 -L/usr/local/igl/libigl/external/AntTweakBar/lib -lAntTweakBar -framework AppKit -framework GLUT -framework OpenGL -framework Carbon -L/usr/local/igl/libigl//external/embree/bin -lembree -lsys -L/usr/local//lib -lalut -framework OpenAL -lstdc++ 
+	g++-mp-4.7 -o pupskin_test  -std=c++11 -g -ggdb -O0 -Wall -Wextra -Wno-reorder -Wno-unknown-pragmas -D_DEBUG -fopenmp -msse4.2 debug/obj/pupskin_test.o  -L/usr/local//lib -lftd2xx -lftdi -L../../../the-puppet/driver/generic/lib -lpuppet_api -L../../../the-puppet/driver/ftdi/lib -lpuppet_d2xx_serial -L/opt/local/lib -L/usr/local/igl/libigl//external/yimg/ -lyimg -lz -L/usr/X11/lib -lpng -bind_at_load -L/usr/local/igl/libigl//lib -liglpng -ligltetgen -liglmosek -ligl -liglembree -liglbbw -L/usr/local/mosek/7/tools/platform/osx64x86/bin -lmosek64  -L/usr/local/igl/libigl//external/tetgen/ -ltet -L/usr/local/igl/libigl//external/tinyxml2/ -ltinyxml2 -L/usr/local/igl/libigl/external/AntTweakBar/lib -lAntTweakBar -framework AppKit -framework GLUT -framework OpenGL -framework Carbon -L/usr/local/igl/libigl//external/embree/bin -lembree -lsys -L/usr/local//lib -lalut -framework OpenAL -lstdc++ 
 	valgrind --leak-check=yes ./pupskin_test
 
 .PHONY: clean
