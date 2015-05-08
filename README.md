@@ -37,4 +37,14 @@ or
 
 Install the above dependencies and then (crossing fingers) issue:
 
+    cd driver/generic
+    cmake .
+    make
+    cd ../ftdi
+    cmake .
+    make
+    cd ../unix
+    cmake .
+    make
+    cd ../../application
     make
