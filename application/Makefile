@@ -74,10 +74,11 @@ ifeq ($(UNAME), Linux)
 # BOOST
 	BOOST_INC= -I/usr/local/include
 	BOOST_LIB= -L/usr/local/lib -lboost_system-mt -lboost_program_options-mt
-# Puppet API
-	PUPPET=../../../the-puppet/
-	PUPPET_LIB=-L$(PUPPET)/driver/generic/lib -lpuppet_api -L$(PUPPET)/driver/unix/lib -lpuppet_serial
-	PUPPET_INC=-I$(PUPPET)/driver/unix/include -I$(PUPPET)/driver/generic/include -I$(PUPPET) -I$(PUPPET)/driver/ftdi/include
+# DRIVER API
+	DRIVER=../driver/
+	FIRMWARE_PWD=../firmware/..
+	DRIVER_LIB=-L$(DRIVER)/generic/lib -lpuppet_api -L$(DRIVER)/unix/lib -lpuppet_serial
+	DRIVER_INC=-I$(DRIVER)/unix/include -I$(DRIVER)/generic/include -I$(DRIVER) -I$(DRIVER)/ftdi/include -I${FIRMWARE_PWD}
 # Mosek
 	MOSEKPLATFORM=linux64x86
 	MOSEK=/usr/local/mosek
@@ -94,10 +95,11 @@ else
 # BOOST
 	BOOST_INC= -I/opt/local/include
 	BOOST_LIB= -L/opt/local/lib -lboost_system-mt -lboost_program_options -lboost_program_options-mt
-# Puppet API
-	PUPPET=../../../the-puppet/
-	PUPPET_LIB=-L$(PUPPET)/driver/generic/lib -lpuppet_api -L$(PUPPET)/driver/ftdi/lib -lpuppet_d2xx_serial
-	PUPPET_INC=-I$(PUPPET)/driver/unix/include -I$(PUPPET)/driver/generic/include -I$(PUPPET) -I$(PUPPET)/driver/ftdi/include
+# Driver API
+	DRIVER=../driver/
+	FIRMWARE_PWD=../firmware/../
+	DRIVER_LIB=-L$(DRIVER)/generic/lib -lpuppet_api -L$(DRIVER)/ftdi/lib -lpuppet_d2xx_serial
+	DRIVER_INC=-I$(DRIVER)/unix/include -I$(DRIVER)/generic/include -I$(DRIVER) -I$(DRIVER)/ftdi/include -I${FIRMWARE_PWD}
 # FTDI D2XX
 	FTDI=/usr/local/
 	FTDI_LIB=-L$(FTDI)/lib -lftd2xx -lftdi -framework IOKit
@@ -114,10 +116,10 @@ endif
 
 
 # Gather libraries and includes 
-INC=-I. ${FTDI_INC} ${EIGEN3_INC} ${LIBIGL_INC} ${YIMG_INC} ${ANTTWEAKBAR_INC} ${BOOST_INC} ${PUPPET_INC} ${MOSEK_INC} ${TETGEN_INC} ${TINYXML2_INC} ${EMBREE_INC} ${ALUT_INC} ${OPENAL_INC} ${MATLAB_INC}  
+INC=-I. ${FTDI_INC} ${EIGEN3_INC} ${LIBIGL_INC} ${YIMG_INC} ${ANTTWEAKBAR_INC} ${BOOST_INC} ${DRIVER_INC} ${MOSEK_INC} ${TETGEN_INC} ${TINYXML2_INC} ${EMBREE_INC} ${ALUT_INC} ${OPENAL_INC} ${MATLAB_INC}  
 # For LINUX it's important that these are in reverse dependent order
-#LIB=${OPENGL_LIB} ${GLUT_LIB} ${LIBIGL_LIB} ${YIMG_LIB} ${ANTTWEAKBAR_LIB} ${BOOST_LIB} ${PUPPET_LIB} ${MOSEK_LIB} ${TETGEN_LIB} ${TINYXML2_LIB}
-LIB=${FTDI_LIB} ${PUPPET_LIB} ${BOOST_LIB} ${YIMG_LIB} ${LIBIGL_LIB} ${MOSEK_LIB} ${TETGEN_LIB} ${TINYXML2_LIB} ${ANTTWEAKBAR_LIB} ${GLUT_LIB} ${OPENGL_LIB} ${CARBON_LIB} ${EMBREE_LIB} ${ALUT_LIB} ${OPENAL_LIB} ${MATLAB_LIB} 
+#LIB=${OPENGL_LIB} ${GLUT_LIB} ${LIBIGL_LIB} ${YIMG_LIB} ${ANTTWEAKBAR_LIB} ${BOOST_LIB} ${DRIVER_LIB} ${MOSEK_LIB} ${TETGEN_LIB} ${TINYXML2_LIB}
+LIB=${FTDI_LIB} ${DRIVER_LIB} ${BOOST_LIB} ${YIMG_LIB} ${LIBIGL_LIB} ${MOSEK_LIB} ${TETGEN_LIB} ${TINYXML2_LIB} ${ANTTWEAKBAR_LIB} ${GLUT_LIB} ${OPENGL_LIB} ${CARBON_LIB} ${EMBREE_LIB} ${ALUT_LIB} ${OPENAL_LIB} ${MATLAB_LIB} 
 CFLAGS+=${MATLAB_CFLAGS}
 
 CPP_FILES=$(wildcard ./*.cpp)
