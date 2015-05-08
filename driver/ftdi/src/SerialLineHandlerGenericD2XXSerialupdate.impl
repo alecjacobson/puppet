@@ -1,0 +1,38 @@
+{
+  //printf("GenericD2XXSerial::update()\n");
+  //Alec: Q: Is this really thread-safe?
+  //Alec: A: Now it is.
+
+  //igl::Timer timer;
+  //timer.start();
+  // Copy data into buffer
+  pthread_mutex_lock(&data_mtx);
+  std::list<unsigned char> buffer;
+  buffer = data;
+  data.clear();
+  pthread_mutex_unlock(&data_mtx);
+  //printf("buffer.size() %d\n",buffer.size());
+
+  // Q: should we just buffer buffer?
+  while(!buffer.empty())
+  {
+        unsigned char ch = buffer.front();
+        buffer.pop_front();
+        if (ch == '\n') {
+            fb_func(context,line);
+            line.clear();
+        } else {
+            line += ch;
+        }
+  }
+  if (line.size() >= max_size) {
+      fb_func(context,line);
+      line.clear();
+  }
+  // We're signaling the condition here, but since we've eaten all the data
+  // this just means that the line has been updated.
+  //D2XXSerial::update();
+  //timer.stop();
+  //printf("up: %g microseconds\n",timer.getElapsedTimeInMicroSec());
+}
+
