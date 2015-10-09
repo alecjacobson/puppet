@@ -19,7 +19,7 @@
 
 bool rig(
   const Mesh & m,
-  igl::BBWData & bbw_data,
+  igl::bbw::BBWData & bbw_data,
   const Node * root,
   Eigen::MatrixXd & W,
   Eigen::MatrixXd & M,
@@ -29,6 +29,8 @@ bool rig(
 {
   using namespace std;
   using namespace igl;
+  using namespace igl::bbw;
+  using namespace igl::tetgen;
   using namespace Eigen;
 
   // Get skeleton in (C,BE) format
@@ -75,7 +77,7 @@ bool rig(
   }
 
   // Weights matrix
-  if(!bbw(TV,TT,b,bc,bbw_data,W))
+  if(!igl::bbw::bbw(TV,TT,b,bc,bbw_data,W))
   {
     return false;
   }
@@ -102,7 +104,7 @@ bool rig(
 
 bool rig(
   const Mesh & m,
-  igl::BBWData & bbw_data,
+  igl::bbw::BBWData & bbw_data,
   const Node * root,
   Eigen::MatrixXd & W,
   Eigen::MatrixXd & M)

@@ -1,6 +1,6 @@
 #include "Uniped.h"
 #include "rigid2d.h"
-#include <igl/draw_mesh.h>
+#include <igl/opengl2/draw_mesh.h>
 #include <igl/get_seconds.h>
 #include <igl/STR.h>
 #include "GLUT_include.h"
@@ -90,6 +90,7 @@ void Uniped::update()
 void Uniped::draw()
 {
   using namespace igl;
+  using namespace igl::opengl2;
   using namespace Eigen;
   glEnable(GL_TEXTURE_2D);
   glDisable(GL_LIGHTING);

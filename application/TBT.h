@@ -4,7 +4,7 @@
 
 #include "GL_include.h"
 
-#include <igl/lens_flare.h>
+#include <igl/opengl2/lens_flare.h>
 #include <vector>
 
 // Callback prototype for announcing angles change

@@ -10,6 +10,7 @@
 #  pragma GCC system_header
 #endif
 
+#include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/StdVector>
 

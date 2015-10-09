@@ -16,7 +16,7 @@
 
 // Functions
 #include <igl/REDRUM.h>
-#include <igl/project.h>
+#include <igl/opengl2/project.h>
 #include <igl/project_to_line.h>
 #include <igl/quat_mult.h>
 #include <igl/quat_conjugate.h>
@@ -307,7 +307,7 @@ bool Splitter::drag(const int x, const int y, const int /*modifier*/)
           glTranslated(0,0,0);
 
           double origin[3];
-          igl::project(0,0,0,&origin[0],&origin[1],&origin[2]);
+          igl::opengl2::project(0,0,0,&origin[0],&origin[1],&origin[2]);
           pop();
           popmv();
           double rot[4];

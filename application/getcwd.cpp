@@ -1,6 +1,7 @@
 // http://stackoverflow.com/a/2869667/148668
 #include "getcwd.h"
 #include <unistd.h>
+#include <cerrno>
 #include <stdexcept>
 #include <memory>
 

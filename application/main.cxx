@@ -1,6 +1,6 @@
-#ifdef __llvm__
-#  error "LLVM sux0rs and you're not allowed to use it, switch to gcc"
-#endif
+//#ifdef __llvm__
+//#  error "LLVM sux0rs and you're not allowed to use it, switch to gcc"
+//#endif
 
 
 //#include "stop_bouncing_dock_icon.h"

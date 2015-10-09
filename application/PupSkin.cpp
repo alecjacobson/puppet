@@ -45,14 +45,13 @@
 #include <igl/quat_mult.h>
 #include <igl/quat_conjugate.h>
 #include <igl/canonical_quaternions.h>
-#include <igl/render_to_tga.h>
+#include <igl/opengl/render_to_tga.h>
 #include <igl/png/render_to_png.h>
 #include <igl/png/render_to_png_async.h>
 #include <igl/Camera.h>
 #include <igl/PI.h>
 #include <igl/ZERO.h>
 #include <igl/snap_to_canonical_view_quat.h>
-#include <igl/report_gl_error.h>
 #include <igl/get_seconds.h>
 #include <igl/get_seconds_hires.h>
 #include <igl/mat_to_quat.h>
@@ -68,20 +67,21 @@
 #include <igl/per_vertex_normals.h>
 #include <igl/per_corner_normals.h>
 #include <igl/material_colors.h>
-#include <igl/draw_beach_ball.h>
-#include <igl/draw_floor.h>
-#include <igl/draw_point.h>
-#include <igl/draw_skeleton_vector_graphics.h>
-#include <igl/draw_skeleton_3d.h>
+#include <igl/opengl2/draw_beach_ball.h>
+#include <igl/opengl2/draw_floor.h>
+#include <igl/opengl2/draw_point.h>
+#include <igl/opengl2/draw_skeleton_vector_graphics.h>
+#include <igl/opengl2/draw_skeleton_3d.h>
+#include <igl/opengl2/model_proj_viewport.h>
 //#define IGL_HEADER_ONLY
 //#define EXTREME_VERBOSE
-#include <igl/project.h>
+#include <igl/opengl2/project.h>
 #include <igl/embree/unproject_in_mesh.h>
 #ifdef WITH_MATLAB
 #  include <igl/matlab/MatlabWorkspace.h>
 #endif
 #include <igl/matlab_format.h>
-#include <igl/ReAntTweakBar.h>
+#include <igl/anttweakbar/ReAntTweakBar.h>
 #include <igl/two_axis_valuator_fixed_up.h>
 #include <igl/lbs_matrix.h>
 #include <igl/forward_kinematics.h>
@@ -250,7 +250,7 @@ bool PupSkin::save(const std::string prefix)
   // Save skeleton
 #ifdef WITH_MATLAB
   {
-    MatlabWorkspace mw;
+    igl::matlab::MatlabWorkspace mw;
     MatrixXd C_rel = C;
     m.relative_to_mesh(C_rel);
     mw.save(C_rel,"C");
@@ -392,6 +392,7 @@ void PupSkin::init_anttweakbar()
   using namespace std;
   using namespace Eigen;
   using namespace igl;
+  using namespace igl::anttweakbar;
   // Initialize anttweakbar library
   TwInit(TW_OPENGL, NULL);
   rebar.TwNewBar("bar");
@@ -481,7 +482,7 @@ void PupSkin::init_anttweakbar()
   }
   rebar.TwSetParam( "Lights", "opened", TW_PARAM_INT32, 1, &INT_ZERO);
 
-  TwType RotationTypeTW = ReTwDefineEnumFromString("RotationType","igl_trackball,two_axis_fixed_up");
+  TwType RotationTypeTW = igl::anttweakbar::ReTwDefineEnumFromString("RotationType","igl_trackball,two_axis_fixed_up");
   rebar.TwAddVarCB("rotation_type", RotationTypeTW,
     set_rotation_typeCB,get_rotation_typeCB,this,
     "group=Camera keyIncr=] keyDecr=[ help='type of rotation interface'");
@@ -507,7 +508,7 @@ void PupSkin::init_anttweakbar()
     "group='Camera' "
     "label='orthographic' "
     "key='o' "
-    "help='Toggle orthographic projection' "
+    "help='Toggle orthographic igl::opengl2::projection' "
     );
   rebar.TwAddButton("snap",&snapCB,this,
     "group='Camera' "
@@ -684,7 +685,7 @@ void PupSkin::add_node_group_to_anttweakbar()
     {ROTATION_CONTROL_TYPE_AXIS,"axis"},
   };
   TwType RotationControlTypeTW = 
-    ReTwDefineEnum(
+    igl::anttweakbar::ReTwDefineEnum(
         "RotationControlType", 
         RotationControlTypeEV, 
         NUM_ROTATION_CONTROL_TYPES);
@@ -702,7 +703,7 @@ void PupSkin::add_node_group_to_anttweakbar()
     {ROTATION_AXIS_TYPE_RIGHT, "Right"}
   };
   TwType RotationAxisTypeTW = 
-    ReTwDefineEnum("RotationAxisType", RotationAxisTypeEV, NUM_ROTATION_AXIS_TYPES);
+    igl::anttweakbar::ReTwDefineEnum("RotationAxisType", RotationAxisTypeEV, NUM_ROTATION_AXIS_TYPES);
   rebar.TwAddVarRW("node_rotation_axis_type",RotationAxisTypeTW,&Node::rotation_axis_type,
     " label='Rot. axis' group='Node' key=V"
     " help='Vector about which to rotate when using axis rot. control type'");
@@ -821,7 +822,7 @@ void PupSkin::add_skinning_group_to_anttweakbar()
     {SKINNING_METHOD_DQS,"dqs"},
   };
   TwType SkinningMethodTW = 
-    ReTwDefineEnum(
+    igl::anttweakbar::ReTwDefineEnum(
         "SkinningMethodType", 
         SkinningMethodEV, 
         NUM_SKINNING_METHODS);
@@ -836,13 +837,13 @@ void PupSkin::add_skinning_group_to_anttweakbar()
     "label='show rig skeleton?' "
     "key='S' "
     "help='Show rig skeleton' ");
-  TwType SkeletonStyleTypeTW = ReTwDefineEnumFromString("SkeletonStyleType",
+  TwType SkeletonStyleTypeTW = igl::anttweakbar::ReTwDefineEnumFromString("SkeletonStyleType",
       "3d,vector-graphics");
   rebar.TwAddVarRW("skel_style",SkeletonStyleTypeTW,&skel_style,
     "group='Skinning' "
     "label='skeleton style' ");
   {
-    TwType ControlTypeTW = ReTwDefineEnumFromString("ControlType",
+    TwType ControlTypeTW = igl::anttweakbar::ReTwDefineEnumFromString("ControlType",
       "puppet,mouse");
     const auto & get_control_typeCB = [](void * v, void * clientData)
     {
@@ -1019,8 +1020,9 @@ bool PupSkin::load_skeleton(const std::string filename)
   using namespace std;
   using namespace Eigen;
   using namespace igl;
+  using namespace igl::matlab;
   // clear any selected bones
-#ifdef WITH_MATLAB
+#ifndef WITH_MATLAB
   cerr<<REDRUM("Skeleton loading disabled without WITH_MATLAB defined")<<endl;
   return true;
 #else
@@ -1244,16 +1246,17 @@ void PupSkin::draw_floor(const double floor_scale, const double floor_offset)
 {
   using namespace Eigen;
   using namespace igl;
+  using namespace igl::opengl2;
   glPushMatrix();
   glTranslated(0,floor_offset,0);
   glScaled(floor_scale,floor_scale,floor_scale);
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(10.0,1);
-  if(project(Vector3d(0,0,0))(2) - project(Vector3d(0,1,0))(2) > -FLOAT_EPS)
+  if(project(Vector3d(0,0,0))(2) -igl::opengl2::project(Vector3d(0,1,0))(2) > -FLOAT_EPS)
   {
     draw_floor_outline();
   }
-  igl::draw_floor();
+  igl::opengl2::draw_floor();
   glDisable(GL_POLYGON_OFFSET_FILL);
   glPopMatrix();
 }
@@ -1466,6 +1469,7 @@ bool PupSkin::rig_transformations(
 void PupSkin::draw_objects(const int vp)
 {
   using namespace igl;
+  using namespace igl::opengl2;
   using namespace Eigen;
   using namespace std;
 
@@ -1623,6 +1627,7 @@ void PupSkin::draw_puppet(const bool show_controls)
 void PupSkin::draw_ui()
 {  
   using namespace igl;
+  using namespace igl::opengl2;
   using namespace std;
   using namespace Eigen;
   // Draw skeleton beneath puppet
@@ -1821,6 +1826,9 @@ bool PupSkin::hover(const int hover_x, const int hover_y)
 void PupSkin::display()
 {
   using namespace igl;
+  using namespace igl::opengl2;
+  using namespace igl::opengl;
+  using namespace igl::png;
   using namespace std;
   using namespace Eigen;
 
@@ -2377,7 +2385,7 @@ void PupSkin::mouse_down(int glutButton, int mouse_x, int mouse_y)
                 {
                   Vec3 po(0,0,0);
                   Vec3 o = n->origin();
-                  igl::project(o,po);
+                  igl::opengl2::project(o,po);
                   bool hit = 
                     (po(0)-mouse_x)*
                     (po(0)-mouse_x)+
@@ -2535,6 +2543,7 @@ void PupSkin::mouse_up(int /*glutButton*/, int mouse_x, int mouse_y)
 void PupSkin::mouse_drag(int mouse_x, int mouse_y)
 {
   using namespace igl;
+  using namespace igl::embree;
   using namespace std;
   using namespace Eigen;
   bool used = false;
@@ -2613,8 +2622,15 @@ void PupSkin::mouse_drag(int mouse_x, int mouse_y)
           m.push_matrix();
           double z = 0;
           Vec3 obj,win;
-          int nhits = unproject_in_mesh(mouse_x,height-mouse_y,ei,obj);
-          project(obj,win);
+          Eigen::Matrix4f model,proj;
+          Eigen::Vector4f viewport;
+          igl::opengl2::model_proj_viewport(model,proj,viewport);
+          Eigen::Vector2f pos(mouse_x,height-mouse_y);
+
+          int nhits = igl::embree::unproject_in_mesh(
+              pos,model,proj,viewport,ei,obj);
+
+          igl::opengl2::project(obj,win);
           m.pop_matrix();
           z = win(2);
           if(get_root() && !cpu_lbs)

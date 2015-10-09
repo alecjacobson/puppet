@@ -5,7 +5,7 @@
 
 void add_puppetreader_anttweakbar(
   PuppetReader * pr,
-  igl::ReTwBar & rebar)
+  igl::anttweakbar::ReTwBar & rebar)
 {
   using namespace PuppetReaderCallbacks;
   assert(pr);

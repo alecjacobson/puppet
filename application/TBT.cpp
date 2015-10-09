@@ -12,9 +12,9 @@
 
 #include <igl/readOBJ.h>
 #include <igl/per_face_normals.h>
-#include <igl/report_gl_error.h>
+#include <igl/opengl/report_gl_error.h>
 #include <igl/material_colors.h>
-#include <igl/draw_beach_ball.h>
+#include <igl/opengl2/draw_beach_ball.h>
 #include <igl/quat_to_mat.h>
 #include <igl/get_seconds.h>
 #include <igl/STR.h>
@@ -66,23 +66,24 @@ static void tareCB(void *clientData)
 void TBT::initialize_textures()
 {
   using namespace igl;
+  using namespace igl::opengl2;
   // Init flares
   lens_flare_load_textures(shine_ids,flare_ids);
   TBT::textures_initialized = true;
-  report_gl_error();
+  igl::opengl::report_gl_error();
 }
 
-static std::vector<igl::Flare > LED_flares(
+static std::vector<igl::opengl2::Flare > LED_flares(
   const float * A,
   const float * B,
   const float * C)
 {
   //lens_flare_create(RED,GREEN,BLUE,flares);
-  std::vector<igl::Flare> flares(4);
-  flares[0] = igl::Flare(-1, 1.0f, 1.*0.1f,  C, 1.0);
-  flares[1] = igl::Flare(-1, 1.0f, 1.*0.15f, B, 1.0);
-  flares[2] = igl::Flare(-1, 1.0f, 1.*0.35f, A, 1.0);
-  flares[3] = igl::Flare( 2, 1.0f, 1.*0.1f, A, 0.4);
+  std::vector<igl::opengl2::Flare> flares(4);
+  flares[0] = igl::opengl2::Flare(-1, 1.0f, 1.*0.1f,  C, 1.0);
+  flares[1] = igl::opengl2::Flare(-1, 1.0f, 1.*0.15f, B, 1.0);
+  flares[2] = igl::opengl2::Flare(-1, 1.0f, 1.*0.35f, A, 1.0);
+  flares[3] = igl::opengl2::Flare( 2, 1.0f, 1.*0.1f, A, 0.4);
   return flares;
 }
 
@@ -141,6 +142,7 @@ TBT & TBT::operator=(const TBT & that)
 void TBT::draw_self() const 
 {
   using namespace igl;
+  using namespace igl::opengl2;
   using namespace std;
   using namespace Eigen;
 
@@ -283,7 +285,7 @@ void TBT::draw_LEDs() const
         {1,0.1,0.1},
         {0.1,1,0.1},
         {0.1,0.1,1}};
-      vector<Flare> flares = LED_flares(RGB[l%3],RGB[(l+2)%3],RGB[(l+1)%3]);
+      vector<igl::opengl2::Flare> flares = LED_flares(RGB[l%3],RGB[(l+2)%3],RGB[(l+1)%3]);
       glScaled(8,8,8);
       glEnable(GL_POLYGON_OFFSET_FILL);
       glPolygonOffset(0,-100.0);

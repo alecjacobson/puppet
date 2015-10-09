@@ -13,6 +13,8 @@
 #include <igl/matlab_format.h>
 #include <igl/mosek/mosek_quadprog.h>
 
+#include <Eigen/Core>
+
 #include <cassert>
 #include <algorithm>
 #include <cmath>
@@ -274,6 +276,7 @@ igl::SolverStatus tree_fit(
 {
   using namespace Eigen;
   using namespace igl;
+  using namespace igl::mosek;
   using namespace std;
   // Computation types
   typedef typename DerivedS::Scalar Scalar;

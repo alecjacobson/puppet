@@ -4,13 +4,14 @@
 all: ctags puppet
 
 
-gg=g++-mp-4.7
+gg=g++
+#gg=g++-mp-4.7
 #gg=g++-mp-4.3
 # Boost with macports is built with gcc-apple and doesn't work with any proper g++
 #gg=g++-apple-4.2
 
-RELEASE_CFLAGS=-std=c++11 -g -O3 -Wall -Wextra -Wno-reorder -Wno-unknown-pragmas -D_RELEASE -fopenmp -msse4.2 -DIGL_STATIC_LIBRARY
-DEBUG_CFLAGS=-std=c++11 -g -ggdb -O0 -Wall -Wextra -Wno-reorder -Wno-unknown-pragmas -D_DEBUG -fopenmp -msse4.2 -fstack-protector-all -DIGL_STATIC_LIBRARY
+RELEASE_CFLAGS=-std=c++11 -g -O3 -Wall -Wextra -Wno-reorder -Wno-unknown-pragmas -D_RELEASE -msse4.2 -DIGL_STATIC_LIBRARY
+DEBUG_CFLAGS=-std=c++11 -g -ggdb -O0 -Wall -Wextra -Wno-reorder -Wno-unknown-pragmas -D_DEBUG -msse4.2 -fstack-protector-all -DIGL_STATIC_LIBRARY
 #CFLAGS+=${RELEASE_CFLAGS}
 #build=release
 CFLAGS+=${DEBUG_CFLAGS} -Wno-deprecated-declarations
@@ -18,7 +19,7 @@ build=debug
 
 # LIBIGL Library
 LIBIGL=/usr/local/igl/libigl/
-LIBIGL_LIB=-L$(LIBIGL)/lib -liglpng -ligltetgen -liglmosek -ligl -liglembree -liglbbw -liglviewer -liglsvd3x3
+LIBIGL_LIB=-L$(LIBIGL)/lib -liglpng -ligltetgen -liglmosek -ligl -liglembree -liglbbw -liglviewer -liglanttweakbar -liglopengl -liglopengl2
 LIBIGL_INC=-I$(LIBIGL)/include
 
 EMBREE=$(LIBIGL)/external/embree
@@ -91,10 +92,10 @@ else
 	GLUT_LIB=-framework GLUT
 	ANTTWEAKBAR_LIB+= -framework AppKit
 # Eigen
-	EIGEN3_INC=-I/opt/local/include/eigen3 -I/opt/local/include/eigen3/unsupported
+	EIGEN3_INC=-I/usr/local/include/eigen3 -I/usr/local/include/eigen3/unsupported
 # BOOST
-	BOOST_INC= -I/opt/local/include
-	BOOST_LIB= -L/opt/local/lib -lboost_system-mt -lboost_program_options -lboost_program_options-mt
+	BOOST_INC= -I/usr/local/include
+	BOOST_LIB= -L/usr/local/lib -lboost_system-mt -lboost_program_options -lboost_program_options-mt
 # Driver API
 	DRIVER=../driver/
 	FIRMWARE_PWD=../firmware/../
@@ -216,7 +217,7 @@ tank: ${build}/obj/tank.o $(OBJ_FILES)
 .PHONY: valgrind_pupskin
 valgrind_pupskin: ${build}/obj/PupSkin.o ${build}/obj/pupskin_test.o
 #$(gg) -o pupskin_test $(AFLAGS) $(CFLAGS) ${build}/obj/pupskin_test.o  $(LIB)
-	g++-mp-4.7 -o pupskin_test  -std=c++11 -g -ggdb -O0 -Wall -Wextra -Wno-reorder -Wno-unknown-pragmas -D_DEBUG -fopenmp -msse4.2 debug/obj/pupskin_test.o  -L/usr/local//lib -lftd2xx -lftdi -L../../../the-puppet/driver/generic/lib -lpuppet_api -L../../../the-puppet/driver/ftdi/lib -lpuppet_d2xx_serial -L/opt/local/lib -L/usr/local/igl/libigl//external/yimg/ -lyimg -lz -L/usr/X11/lib -lpng -bind_at_load -L/usr/local/igl/libigl//lib -liglpng -ligltetgen -liglmosek -ligl -liglembree -liglbbw -L/usr/local/mosek/7/tools/platform/osx64x86/bin -lmosek64  -L/usr/local/igl/libigl//external/tetgen/ -ltet -L/usr/local/igl/libigl//external/tinyxml2/ -ltinyxml2 -L/usr/local/igl/libigl/external/AntTweakBar/lib -lAntTweakBar -framework AppKit -framework GLUT -framework OpenGL -framework Carbon -L/usr/local/igl/libigl//external/embree/bin -lembree -lsys -L/usr/local//lib -lalut -framework OpenAL -lstdc++ 
+	g++-mp-4.7 -o pupskin_test  -std=c++11 -g -ggdb -O0 -Wall -Wextra -Wno-reorder -Wno-unknown-pragmas -D_DEBUG -msse4.2 debug/obj/pupskin_test.o  -L/usr/local//lib -lftd2xx -lftdi -L../../../the-puppet/driver/generic/lib -lpuppet_api -L../../../the-puppet/driver/ftdi/lib -lpuppet_d2xx_serial -L/usr/local/lib -L/usr/local/igl/libigl//external/yimg/ -lyimg -lz -L/usr/X11/lib -lpng -bind_at_load -L/usr/local/igl/libigl//lib -liglpng -ligltetgen -liglmosek -ligl -liglembree -liglbbw -L/usr/local/mosek/7/tools/platform/osx64x86/bin -lmosek64  -L/usr/local/igl/libigl//external/tetgen/ -ltet -L/usr/local/igl/libigl//external/tinyxml2/ -ltinyxml2 -L/usr/local/igl/libigl/external/AntTweakBar/lib -lAntTweakBar -framework AppKit -framework GLUT -framework OpenGL -framework Carbon -L/usr/local/igl/libigl//external/embree/bin -lembree -lsys -L/usr/local//lib -lalut -framework OpenAL -lstdc++ 
 	valgrind --leak-check=yes ./pupskin_test
 
 .PHONY: clean

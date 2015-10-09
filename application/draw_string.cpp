@@ -1,5 +1,6 @@
 #include "draw_string.h"
 #include <algorithm>
+#include <functional>
 
 
 void draw_string(

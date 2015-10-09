@@ -1,9 +1,9 @@
 #ifndef PUPSKIN_H
 #define PUPSKIN_H
 
-#ifdef __llvm__
-#  error "LLVM sux0rs and you're not allowed to use it, switch to gcc"
-#endif
+//#ifdef __llvm__
+//#  error "LLVM sux0rs and you're not allowed to use it, switch to gcc"
+//#endif
 
 
 // Forward declarations
@@ -17,10 +17,10 @@ class Node;
 #include "PosingTest.h"
 #include "RigAnimation.h"
 
-#include <igl/MouseController.h>
+#include <igl/opengl2/MouseController.h>
 #include <igl/Viewport.h>
 #include <igl/Camera.h>
-#include <igl/ReAntTweakBar.h>
+#include <igl/anttweakbar/ReAntTweakBar.h>
 #include <igl/bbw/bbw.h>
 #include <igl/embree/EmbreeIntersector.h>
 
@@ -54,7 +54,7 @@ class PupSkin
       Eigen::aligned_allocator<Eigen::Quaterniond> > RotationList;
     static PuppetReader * pr;
     PosingTest posing_test;
-    igl::MouseController mouse;
+    igl::opengl2::MouseController mouse;
     RigAnimation rig_animation;
     enum RotationType
     {
@@ -90,7 +90,7 @@ class PupSkin
     bool mesh_is_visible;
     Mesh m;
     Mesh m_def;
-    igl::EmbreeIntersector ei;
+    igl::embree::EmbreeIntersector ei;
   public:
     // Skinning weights for m
     Eigen::MatrixXd W;
@@ -118,7 +118,7 @@ class PupSkin
     bool pick_on_mesh;
   public:
     // TODO: should reveal bar through getter/setter
-    igl::ReTwBar rebar;
+    igl::anttweakbar::ReTwBar rebar;
   private:
     const double min_angle;
     bool skeleton_visible; 

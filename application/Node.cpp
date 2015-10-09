@@ -33,26 +33,26 @@
 // Functions
 #include <igl/is_dir.h>
 #include <igl/trackball.h>
-#include <igl/report_gl_error.h>
+#include <igl/opengl/report_gl_error.h>
 #include <igl/quat_to_mat.h>
 #include <igl/quat_conjugate.h>
 #include <igl/quat_mult.h>
-#include <igl/draw_beach_ball.h>
-#include <igl/unproject_to_zero_plane.h>
-#include <igl/unproject.h>
-#include <igl/project.h>
+#include <igl/opengl2/draw_beach_ball.h>
+#include <igl/opengl2/unproject_to_zero_plane.h>
+#include <igl/opengl2/unproject.h>
+#include <igl/opengl2/project.h>
 #include <igl/project_to_line.h>
 #include <igl/quat_mult.h>
 #include <igl/quat_conjugate.h>
 #include <igl/mat_to_quat.h>
-#include <igl/draw_point.h>
+#include <igl/opengl2/draw_point.h>
 #include <igl/list_to_matrix.h>
 #include <igl/readOBJ.h>
 #include <igl/readDMAT.h>
 #include <igl/per_face_normals.h>
-#include <igl/view_axis.h>
-#include <igl/up_axis.h>
-#include <igl/right_axis.h>
+#include <igl/opengl2/view_axis.h>
+#include <igl/opengl2/up_axis.h>
+#include <igl/opengl2/right_axis.h>
 #include <igl/matlab_format.h>
 
 // Convenience
@@ -513,23 +513,23 @@ Vec3 Node::origin_at_bind() const
 
 void Node::unproject( const int x, const int y, double * u) const
 {
-  using namespace igl;
   // down_t_off projected to screen to get depth value
   double p[3];
-  igl::project(down_t_off(0),down_t_off(1),down_t_off(2),&p[0],&p[1],&p[2]);
+  igl::opengl2::project(down_t_off(0),down_t_off(1),down_t_off(2),&p[0],&p[1],&p[2]);
   // unprojected x,y with down_t_off depth
-  igl::unproject(x,y,p[2],&u[0], &u[1], &u[2]);
+  igl::opengl2::unproject(x,y,p[2],&u[0], &u[1], &u[2]);
 }
 
 void Node::unproject_to_screen_z( const int x, const int y, double * u) const
 {
   using namespace igl;
+  using namespace igl::opengl2;
   // orthogonal projection in screen space
   // screen space origin
   double origin[3];
-  igl::project(0,0,0,&origin[0],&origin[1],&origin[2]);
+  igl::opengl2::project(0,0,0,&origin[0],&origin[1],&origin[2]);
   double zaxis[3];
-  igl::project(0,0,1,&zaxis[0],&zaxis[1],&zaxis[2]);
+  igl::opengl2::project(0,0,1,&zaxis[0],&zaxis[1],&zaxis[2]);
   zaxis[0] -= origin[0];
   zaxis[1] -= origin[1];
   zaxis[2] -= origin[2];
@@ -543,7 +543,7 @@ void Node::unproject_to_screen_z( const int x, const int y, double * u) const
   sp[0] = origin[0]+t*zaxis[0];
   sp[1] = origin[1]+t*zaxis[1];
   sp[2] = origin[2]+t*zaxis[2];
-  igl::unproject(sp[0],sp[1],sp[2],&u[0],&u[1],&u[2]);
+  igl::opengl2::unproject(sp[0],sp[1],sp[2],&u[0],&u[1],&u[2]);
 }
 
 void Node::draw() const
@@ -551,6 +551,7 @@ void Node::draw() const
   using namespace Eigen;
   using namespace std;
   using namespace igl;
+  using namespace igl::opengl;
 
 
   Vec3 tt_off = t_off;
@@ -701,6 +702,7 @@ void Node::draw_translation_controls() const
 void Node::draw_rotation_controls() const
 {
   using namespace igl;
+  using namespace igl::opengl2;
   switch(rotation_control_type)
   {
     case ROTATION_CONTROL_TYPE_TRACKBALL:
@@ -737,17 +739,17 @@ void Node::draw_rotation_controls() const
       glMultMatrixd(old_mv);
 
       Vec3 axis;
-      view_axis(&axis[0],&axis[1],&axis[2]);
+      igl::opengl2::view_axis(&axis[0],&axis[1],&axis[2]);
       switch(rotation_axis_type)
       {
         case ROTATION_AXIS_TYPE_VIEW:
-          view_axis(mv,&axis[0],&axis[1],&axis[2]);
+          igl::opengl2::view_axis(mv,&axis[0],&axis[1],&axis[2]);
           break;
         case ROTATION_AXIS_TYPE_UP:
-          up_axis(mv,&axis[0],&axis[1],&axis[2]);
+          igl::opengl2::up_axis(mv,&axis[0],&axis[1],&axis[2]);
           break;
         case ROTATION_AXIS_TYPE_RIGHT:
-          right_axis(mv,&axis[0],&axis[1],&axis[2]);
+          igl::opengl2::right_axis(mv,&axis[0],&axis[1],&axis[2]);
           break;
         default:{}
       }
@@ -974,7 +976,7 @@ bool Node::drag(const int x, const int y, const int /*modifier*/)
         glGetDoublev(GL_MODELVIEW_MATRIX,mv);
         push();
         double origin[3];
-        igl::project(0,0,0,&origin[0],&origin[1],&origin[2]);
+        igl::opengl2::project(0,0,0,&origin[0],&origin[1],&origin[2]);
         pop();
         popmv();
         double rot[4];
@@ -1041,17 +1043,17 @@ bool Node::drag(const int x, const int y, const int /*modifier*/)
         glGetDoublev(GL_MODELVIEW_MATRIX,mv);
         popmv();
         Vec3 axis;
-        view_axis(&axis[0],&axis[1],&axis[2]);
+        igl::opengl2::view_axis(&axis[0],&axis[1],&axis[2]);
         switch(rotation_axis_type)
         {
           case ROTATION_AXIS_TYPE_VIEW:
-            view_axis(mv,&axis[0],&axis[1],&axis[2]);
+            igl::opengl2::view_axis(mv,&axis[0],&axis[1],&axis[2]);
             break;
           case ROTATION_AXIS_TYPE_UP:
-            up_axis(mv,&axis[0],&axis[1],&axis[2]);
+            igl::opengl2::up_axis(mv,&axis[0],&axis[1],&axis[2]);
             break;
           case ROTATION_AXIS_TYPE_RIGHT:
-            right_axis(mv,&axis[0],&axis[1],&axis[2]);
+            igl::opengl2::right_axis(mv,&axis[0],&axis[1],&axis[2]);
             break;
           default:{}
         }

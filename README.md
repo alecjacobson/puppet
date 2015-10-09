@@ -20,6 +20,8 @@ FTDI which is poorly supported on Mac OS X.
  - boost
  - alut (optional for user study apps)
  - openAL (optional for user study apps)
+ - matlab (this is a silly requirement, I'm just using the .mat file format to
+   store the skeleton data)
 
 ## Installation
 
@@ -38,13 +40,18 @@ or
 Install the above dependencies and then (crossing fingers) issue:
 
     cd driver/generic
-    cmake .
+    mkdir build
+    cd build
+    cmake ..
     make
-    cd ../ftdi
-    cmake .
+    cd ../../ftdi
+    mkdir build
+    cd build
     make
-    cd ../unix
-    cmake .
+    cd ../../unix
+    mkdir build
+    cd build
+    cmake ..
     make
-    cd ../../application
+    cd ../../../application
     make

@@ -16,7 +16,7 @@
 #include <igl/canonical_quaternions.h>
 //#include <igl/matlab/MatlabWorkspace.h>
 #include <igl/get_seconds.h>
-#include <igl/ReAntTweakBar.h>
+#include <igl/anttweakbar/ReAntTweakBar.h>
 
 #include <deque>
 #include <algorithm>
@@ -58,6 +58,7 @@ void TW_CALL rigCB(void *clientData)
 {
   using namespace std;
   using namespace igl;
+  using namespace igl::bbw;
   using namespace Eigen;
   PupSkin * p = static_cast<PupSkin*>(clientData);
   // Remember this skeleton

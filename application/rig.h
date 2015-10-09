@@ -3,7 +3,7 @@
 #include "EigenConvenience.h"
 class Node;
 class Mesh;
-namespace igl{class BBWData;};
+namespace igl{namespace bbw{class BBWData;}};
 // Compute skinning weights and lbs
 // matrix.
 //
@@ -20,7 +20,7 @@ namespace igl{class BBWData;};
 //
 bool rig(
   const Mesh & m,
-  igl::BBWData & bbw_data,
+  igl::bbw::BBWData & bbw_data,
   const Node * root,
   Eigen::MatrixXd & W,
   Eigen::MatrixXd & M,
@@ -30,7 +30,7 @@ bool rig(
 // wrapper without tet mesh
 bool rig(
   const Mesh & m,
-  igl::BBWData & bbw_data,
+  igl::bbw::BBWData & bbw_data,
   const Node * root,
   Eigen::MatrixXd & W,
   Eigen::MatrixXd & M);

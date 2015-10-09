@@ -3,7 +3,7 @@
 #include "SkinningMethod.h"
 #include "Log.h"
 #include "Mesh.h"
-#include <igl/ReAntTweakBar.h>
+#include <igl/anttweakbar/ReAntTweakBar.h>
 #include <Eigen/Geometry>
 #include <Eigen/Core>
 #include "GL_include.h"
@@ -37,7 +37,7 @@ class PosingTest
     std::vector<RotationList > m_poses;
     int m_cur_pose_id;
     GLuint m_dl_id;
-    double m_last_err;
+    //double m_last_err;
     // Excessive, I guess these should be pointers
     Eigen::MatrixXd m_rig_C;
     Eigen::MatrixXi m_rig_BE;
@@ -92,7 +92,7 @@ class PosingTest
     //
     // Inputs:
     //   rebar  reference to reanttweakbar object
-    void add_to_reanttweakbar(igl::ReTwBar & rebar);
+    void add_to_reanttweakbar(igl::anttweakbar::ReTwBar & rebar);
     // Draw current target pose etc.
     void draw() const;
     // Draw the pose without setting any colors etc.

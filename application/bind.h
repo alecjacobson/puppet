@@ -3,7 +3,7 @@
 #include "EigenConvenience.h"
 class Node;
 class Mesh;
-namespace igl{class BBWData;};
+namespace igl{namespace bbw{class BBWData;}};
 // Tell each node that it's being bound. Assumes that `rig` has recently been
 // called.
 //

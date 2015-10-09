@@ -11,7 +11,6 @@
 #include <igl/STR.h>
 #include <igl/get_seconds.h>
 #include <igl/ZERO.h>
-#include <igl/report_gl_error.h>
 #include <iostream>
 #include <cassert>
 #include <algorithm>
@@ -147,7 +146,7 @@ const PosingTest::RotationList * PosingTest::cur_pose() const
   }
 }
 
-void PosingTest::add_to_reanttweakbar(igl::ReTwBar & rebar)
+void PosingTest::add_to_reanttweakbar(igl::anttweakbar::ReTwBar & rebar)
 {
   using namespace igl;
   rebar.TwAddVarRW("posing_test_is_testing",TW_TYPE_BOOLCPP,&m_is_testing,

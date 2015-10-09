@@ -1,6 +1,6 @@
 #ifndef ADD_PUPPETREADER_ANTTWEAKBAR_H
 #define ADD_PUPPETREADER_ANTTWEAKBAR_H
-#include <igl/ReAntTweakBar.h>
+#include <igl/anttweakbar/ReAntTweakBar.h>
 class PuppetReader;
 // Add buttons and switches for variables corresponding to PuppetReader. Adds
 // to group='PuppetReader' and uses some default key shortcuts, labels and
@@ -16,5 +16,5 @@ class PuppetReader;
 // 'i'  Send identify command
 void add_puppetreader_anttweakbar(
   PuppetReader * pr,
-  igl::ReTwBar & rebar);
+  igl::anttweakbar::ReTwBar & rebar);
 #endif

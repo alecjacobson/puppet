@@ -1,7 +1,7 @@
 #ifndef RIGANIMATION_H
 #define RIGANIMATION_H
 #include "BezierAnimation.h"
-#include <igl/ReAntTweakBar.h>
+#include <igl/anttweakbar/ReAntTweakBar.h>
 #include <Eigen/Geometry>
 #include <vector>
 
@@ -70,7 +70,7 @@ public:
   //
   // Inputs:
   //   rebar  ReAntTweakBar instance
-  void add_to_reanttweakbar(igl::ReTwBar & rebar);
+  void add_to_reanttweakbar(igl::anttweakbar::ReTwBar & rebar);
   // Start playing current animation from beginning.
   //
   // Inputs:

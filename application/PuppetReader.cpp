@@ -299,10 +299,10 @@ void PuppetReader::read_line(const std::string &line)
   if(log_lines&=(log_file!=NULL))
   {
     static double t_start = get_seconds();
-    fprintf(log_file,C_STR("# "<<(get_seconds()-t_start)<<" "));
+    fprintf(log_file,"%s",C_STR("# "<<(get_seconds()-t_start)<<" "));
     string posix(line);
     replace(posix.begin(),posix.end(),'\r','\n');
-    fprintf(log_file,posix.c_str());
+    fprintf(log_file,"%s",posix.c_str());
   }
 
 

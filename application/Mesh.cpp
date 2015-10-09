@@ -5,11 +5,11 @@
 
 // Functions
 #include <igl/quat_to_mat.h>
-#include <igl/draw_mesh.h>
+#include <igl/opengl2/draw_mesh.h>
 #include <igl/per_face_normals.h>
 #include <igl/per_vertex_normals.h>
 #include <igl/per_corner_normals.h>
-#include <igl/sort_triangles.h>
+#include <igl/opengl2/sort_triangles.h>
 #include <igl/dqs.h>
 
 // Constants
@@ -119,6 +119,7 @@ void Mesh::pop_matrix() const
 void Mesh::draw()
 {
   using namespace igl;
+  using namespace igl::opengl2;
   using namespace std;
   Eigen::MatrixXd * N;
   switch(normal_type)
@@ -176,6 +177,7 @@ void Mesh::draw_and_cache()
 void Mesh::sort()
 {
   using namespace igl;
+  using namespace igl::opengl2;
   using namespace std;
   using namespace Eigen;
   MatrixXi FF;

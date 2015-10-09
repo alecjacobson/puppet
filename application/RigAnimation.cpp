@@ -223,9 +223,10 @@ bool RigAnimation::play(RotationList & pose)
   return still_playing;
 }
 
-void RigAnimation::add_to_reanttweakbar(igl::ReTwBar & rebar)
+void RigAnimation::add_to_reanttweakbar(igl::anttweakbar::ReTwBar & rebar)
 {
   using namespace igl;
+  using namespace igl::anttweakbar;
   rebar.TwAddVarRW("rig_animation_keyframe_step",TW_TYPE_DOUBLE,
     &m_keyframe_step,"label='keyframe dur.' group='Animation'");
   const auto & noop = [](const void *,void *){};

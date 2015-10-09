@@ -4,7 +4,10 @@
 
 namespace igl
 {
-  class ReTwBar;
+  namespace anttweakbar
+  {
+    class ReTwBar;
+  }
 }
 
 // Implements a multi-viewport display like Maya's "Four View"
@@ -75,13 +78,13 @@ class FourView
     //
     // Input:
     //   rebar  reanttweakbar object 
-    void add_to_reanttweakbar(igl::ReTwBar & rebar);
+    void add_to_reanttweakbar(igl::anttweakbar::ReTwBar & rebar);
     // Sets visibility of AntTweakbar items according to whether each vp is the
     // current down_vp
     // 
     // Input:
     //   rebar  reanttweakbar object used during add_to_reanttweakbar
-    void update_anttweakbar_visibility(igl::ReTwBar & rebar) const;
+    void update_anttweakbar_visibility(igl::anttweakbar::ReTwBar & rebar) const;
     // Return pointer to camera of last down viewport cached at down.
     igl::Camera & down_camera();
     // Returns pointer to viewport of last down. Returns null if m_down_vp == -1.

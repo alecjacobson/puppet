@@ -2,9 +2,9 @@
 #include "GL_include.h"
 #include "draw_string.h"
 
-#include <igl/draw_point.h>
-#include <igl/project.h>
-#include <igl/unproject.h>
+#include <igl/opengl2/draw_point.h>
+#include <igl/opengl2/project.h>
+#include <igl/opengl2/unproject.h>
 
 #include <iostream>
 
@@ -31,6 +31,7 @@ static const double DRAG_ARROW_TO_POINT_RADIUS = 7;
 void DragArrow::draw()
 {
   using namespace igl;
+  using namespace igl::opengl2;
 
   GLboolean ol,dt,ols;
   glGetBooleanv(GL_LIGHTING,&ol);
@@ -90,6 +91,7 @@ void DragArrow::draw()
 bool DragArrow::down(const int x, const int y, const int /*mod*/)
 {
   using namespace igl;
+  using namespace igl::opengl2;
   using namespace std;
   is_down = false;
   down_x = x;
@@ -129,6 +131,7 @@ static const double SNAP_DIST = 10;
 bool DragArrow::drag(const int x, const int y, const int mod)
 {
   using namespace igl;
+  using namespace igl::opengl2;
   using namespace std;
   if(!is_down)
   {
@@ -143,6 +146,7 @@ bool DragArrow::drag(const int x, const int y, const int mod)
 bool DragArrow::drag(const int x, const int y, const double z, const int /*mod*/)
 {
   using namespace igl;
+  using namespace igl::opengl2;
   using namespace std;
   if(!is_down)
   {

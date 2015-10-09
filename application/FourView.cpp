@@ -3,7 +3,7 @@
 #include <igl/ZERO.h>
 #include <igl/ONE.h>
 #include <igl/get_seconds.h>
-#include <igl/ReAnttweakBar.h>
+#include <igl/anttweakbar/ReAnttweakBar.h>
 #include <igl/snap_to_fixed_up.h>
 #include <igl/canonical_quaternions.h>
 #include "GLUT_include.h" 
@@ -232,9 +232,10 @@ bool FourView::up(const int /*x*/, const int /*y*/)
   return false;
 }
 
-void FourView::add_to_reanttweakbar(igl::ReTwBar & rebar)
+void FourView::add_to_reanttweakbar(igl::anttweakbar::ReTwBar & rebar)
 {
   using namespace igl;
+  using namespace igl::anttweakbar;
   // loop over viewports
   for(int vp = 0;vp<NUM_VIEWPORTS;vp++)
   {
@@ -268,7 +269,7 @@ void FourView::add_to_reanttweakbar(igl::ReTwBar & rebar)
   rebar.TwAddVarRW("vert",TW_TYPE_DOUBLE,&m_vert,"visible=false");
 }
 
-void FourView::update_anttweakbar_visibility(igl::ReTwBar & rebar) const
+void FourView::update_anttweakbar_visibility(igl::anttweakbar::ReTwBar & rebar) const
 {
   using namespace igl;
   for(int vp = 0;vp<NUM_VIEWPORTS;vp++)
