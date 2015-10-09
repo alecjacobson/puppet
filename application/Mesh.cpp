@@ -6,6 +6,7 @@
 // Functions
 #include <igl/quat_to_mat.h>
 #include <igl/opengl2/draw_mesh.h>
+#include <igl/opengl/report_gl_error.h>
 #include <igl/per_face_normals.h>
 #include <igl/per_vertex_normals.h>
 #include <igl/per_corner_normals.h>
@@ -24,6 +25,7 @@ Mesh::Mesh():
   invert_orientation(false),
   display_list_compiled(false),
   dl_id(0),
+  tex_id(0),
   scale(1),
   shift(),
   y_boost(0),
@@ -121,6 +123,8 @@ void Mesh::draw()
   using namespace igl;
   using namespace igl::opengl2;
   using namespace std;
+  using namespace Eigen;
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
   Eigen::MatrixXd * N;
   switch(normal_type)
   {
@@ -144,12 +148,18 @@ void Mesh::draw()
     glFrontFace(GL_CW);
     *N *= -1.0;
   }
-  draw_mesh(dgetV(),dgetF(),*N);
+  if(is_textured())
+  {
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, tex_id);
+  }
+  draw_mesh(dgetV(),dgetF(),*N,MatrixXd(),dgetTC());
   if(invert_orientation)
   {
     *N *= -1.0;
     glFrontFace(old_ff);
   }
+  glPopAttrib();
 }
 
 
@@ -238,6 +248,8 @@ bool Mesh::deformed_copy(
   m_def.dget_normal_type() = get_normal_type();
   m_def.set_invert_orientation(get_invert_orientation());
   m_def.dgetF() = getF();
+  m_def.dgetTC() = getTC();
+  m_def.tex_id = tex_id;
   // Do **not** copy shift, scale, camera as those are baked into lbs,dqs
   // via as_drawn()
   switch(skinning_method)
@@ -285,4 +297,9 @@ bool Mesh::deformed_copy(
       break;
   }
   return true;
+}
+
+bool Mesh::is_textured()
+{
+  return tex_id>0 && getTC().rows()>0;
 }

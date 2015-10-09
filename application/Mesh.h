@@ -31,6 +31,8 @@ class Mesh : public Pickle
     Eigen::MatrixXd FN;
     // Per corner normals
     Eigen::MatrixXd CN;
+    // Texture coords
+    Eigen::MatrixXd TC;
     // Name for opengl name stack
     GLuint name;
     // Normal type
@@ -42,6 +44,8 @@ class Mesh : public Pickle
     bool display_list_compiled;
     // Display list id
     GLuint dl_id;
+    // Texture id
+    GLuint tex_id;
     double scale;
     Vec3 shift;
     double y_boost;
@@ -70,6 +74,7 @@ class Mesh : public Pickle
     // Const getters
     const Eigen::MatrixXd & getV() const{ return V;}
     const Eigen::MatrixXi & getF() const{ return F;}
+    const Eigen::MatrixXd & getTC() const{ return TC;}
     const Eigen::MatrixXd & getVN() const{ return VN;}
     const Eigen::MatrixXd & getFN() const{ return FN;}
     const Eigen::MatrixXd & getCN() const{ return CN;}
@@ -79,6 +84,7 @@ class Mesh : public Pickle
     // should be recompiled
     Eigen::MatrixXd & dgetV() { display_list_compiled = false; return  V;}
     Eigen::MatrixXi & dgetF() { display_list_compiled = false; return  F;}
+    Eigen::MatrixXd & dgetTC() { display_list_compiled = false; return  TC;}
     Eigen::MatrixXd & dgetVN(){ display_list_compiled = false; return VN;}
     Eigen::MatrixXd & dgetFN(){ display_list_compiled = false; return FN;}
     Eigen::MatrixXd & dgetCN(){ display_list_compiled = false; return CN;}
@@ -130,6 +136,7 @@ class Mesh : public Pickle
       const Eigen::MatrixXd & M,
       Mesh & m_def
         ) const;
+    bool is_textured();
   public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

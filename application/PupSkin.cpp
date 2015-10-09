@@ -47,6 +47,7 @@
 #include <igl/canonical_quaternions.h>
 #include <igl/opengl/render_to_tga.h>
 #include <igl/png/render_to_png.h>
+#include <igl/png/texture_from_png.h>
 #include <igl/png/render_to_png_async.h>
 #include <igl/Camera.h>
 #include <igl/PI.h>
@@ -60,6 +61,7 @@
 #include <igl/basename.h>
 // Mesh related
 #include <igl/read_triangle_mesh.h>
+#include <igl/readOBJ.h>
 #include <igl/writeOFF.h>
 #include <igl/writeDMAT.h>
 #include <igl/readDMAT.h>
@@ -201,6 +203,7 @@ void PupSkin::terminate(void)
 #define WEIGHTS_NAME "-weights"
 #define SKELETON_NAME "-skeleton"
 #define POSES_NAME "-poses"
+#define TEXTURE_NAME  "-texture"
 bool PupSkin::save(const std::string prefix)
 {
   using namespace std;
@@ -383,6 +386,15 @@ bool PupSkin::init(int argc, char * argv[])
   // Try to load remaining from autosave
   loaded = loaded ^ PUPSKIN_LOAD_ALL;
   load("autosave",loaded);
+
+#define BACKGROUND_PNG_PATH "data/cinekid/cartoon-forest.png"
+  if(igl::png::texture_from_png(BACKGROUND_PNG_PATH,background_tex_id))
+  {
+    cout<<GREENGIN("Loaded "<<BACKGROUND_PNG_PATH<<" successfully.")<<endl;
+  }else
+  {
+    cout<<REDRUM("Loading "<<BACKGROUND_PNG_PATH<<" failed.")<<endl;
+  }
 
   return true;
 }
@@ -907,7 +919,7 @@ unsigned int PupSkin::load(const std::string _prefix, const unsigned int types)
   int loaded = PUPSKIN_LOAD_NONE;
   if(types & PUPSKIN_LOAD_MODEL)
   {
-    const char * exts[] = {"off","obj"};
+    const char * exts[] = {"obj","off"};
     for(int i = 0;i<2;i++)
     {
       if(load_mesh(prefix+MESH_NAME +"."+ exts[i]) && m.getF().size() > 0)
@@ -916,6 +928,23 @@ unsigned int PupSkin::load(const std::string _prefix, const unsigned int types)
         break;
       }
     }
+  }
+
+  if(types & PUPSKIN_LOAD_TEXTURE)
+  {
+    const string name = prefix+TEXTURE_NAME+".png";
+    if(igl::png::texture_from_png(name,m.tex_id))
+    {
+      cout<<GREENGIN("Reloaded "<<name<<" successfully.")<<endl;
+      loaded |= PUPSKIN_LOAD_TEXTURE;
+    }else
+    {
+      cout<<REDRUM("Reloading "<<name<<" failed.")<<endl;
+    }
+  }
+  if(m.is_textured())
+  {
+    m.color[0] = 1; m.color[1] = 1; m.color[2] = 1; m.color[3] = 1;
   }
 
   if(types & PUPSKIN_LOAD_NODES)
@@ -994,10 +1023,26 @@ bool PupSkin::load_mesh(const std::string filename)
 {
   using namespace std;
   using namespace igl;
-  if(!read_triangle_mesh(filename,m.dgetV(),m.dgetF()))
+  using namespace Eigen;
   {
-    cout<<REDRUM("Reading "<<filename<<" failed.")<<endl;
-    return false;
+    MatrixXd CN;
+    MatrixXi FTC,FN;
+    if(!readOBJ(filename,m.dgetV(),m.dgetTC(),CN,m.dgetF(),FTC,FN))
+    {
+      if(!read_triangle_mesh(filename,m.dgetV(),m.dgetF()))
+      {
+        cout<<REDRUM("Reading "<<filename<<" failed.")<<endl;
+        return false;
+      }
+    }
+    if(m.getTC().rows()>0)
+    {
+      if(m.getTC().rows() != m.getV().rows())
+      {
+        cout<<REDRUM("#TC should equal #V")<<endl;
+        m.dgetTC().resize(0,2);
+      }
+    }
   }
   cout<<GREENGIN("Read "<<filename<<" successfully.")<<endl;
   per_face_normals(  m.dgetV(),m.dgetF(),m.dgetFN());
@@ -2115,6 +2160,26 @@ void PupSkin::draw_scene()
   using namespace igl;
   using namespace Eigen;
 
+  // Draw background
+  glPushMatrix();
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+  glLoadIdentity();
+  glDisable(GL_LIGHTING);
+  glDisable(GL_DEPTH_TEST);
+  glDepthMask(GL_FALSE);
+  glStencilMask(0x00);
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, background_tex_id);
+  glColor3f(1,1,1);
+  glBegin(GL_QUADS);
+  glTexCoord2d( 0, 1);glVertex2d(-1,-1);
+  glTexCoord2d( 1, 1);glVertex2d( 1,-1);
+  glTexCoord2d( 1, 0);glVertex2d( 1, 1);
+  glTexCoord2d( 0, 0);glVertex2d(-1, 1);
+  glEnd();
+  glPopAttrib();
+  glPopMatrix();
+
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
   glEnable(GL_BLEND);
@@ -2122,12 +2187,18 @@ void PupSkin::draw_scene()
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
+
+
   // All lights share white
   Vector4f l_color(0,0,0,1);
   l_color(0) = l_color(1) = l_color(2) = 
     1./(double)(flash_lights.cols() + scene_lights.cols());
 
   place_lights(flash_lights,0,l_color,true);
+  if(!floor_visible)
+  {
+    place_lights(scene_lights,flash_lights.cols(),l_color,true);
+  }
 
   // Draw in each viewport
   for(int v = 0;v<four_view.NUM_VIEWPORTS;v++)
@@ -2162,7 +2233,10 @@ void PupSkin::draw_scene()
     }
     glViewport(vp.x, vp.y, vp.width, vp.height);
     push_scene(vp);
-    place_lights(scene_lights,flash_lights.cols(),l_color,true);
+    if(floor_visible)
+    {
+      place_lights(scene_lights,flash_lights.cols(),l_color,true);
+    }
     draw_objects(v);
     pop_scene();
 

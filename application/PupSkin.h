@@ -36,13 +36,15 @@ const unsigned int PUPSKIN_LOAD_REBAR    = 1<<2;
 const unsigned int PUPSKIN_LOAD_WEIGHTS  = 1<<3;
 const unsigned int PUPSKIN_LOAD_SKELETON = 1<<4;
 const unsigned int PUPSKIN_LOAD_POSES    = 1<<5;
+const unsigned int PUPSKIN_LOAD_TEXTURE  = 1<<6;
 const unsigned int PUPSKIN_LOAD_ALL = 
   PUPSKIN_LOAD_MODEL |
   PUPSKIN_LOAD_NODES |
   PUPSKIN_LOAD_REBAR |
   PUPSKIN_LOAD_WEIGHTS | 
   PUPSKIN_LOAD_SKELETON |
-  PUPSKIN_LOAD_POSES;
+  PUPSKIN_LOAD_POSES |
+  PUPSKIN_LOAD_TEXTURE;
 
 class PupSkin
 {
@@ -82,6 +84,7 @@ class PupSkin
     bool should_init_lbs;
     bool mirror_mode;
     SkinningMethod skinning_method;
+    GLuint background_tex_id;
   public:
     FourView four_view;
   private:
