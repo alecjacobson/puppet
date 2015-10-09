@@ -31,9 +31,11 @@ application/debug/
 *.swp
 *.swo
 lib/
+driver/*/build
 driver/*/CMakeCache.txt
 driver/*/Makefile
 driver/*/bin
 driver/*/cmake_install.cmake
 driver/*/print_out
 application/PuppetReaderLog.txt
+application/autosave*
