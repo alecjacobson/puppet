@@ -62,6 +62,7 @@
 // Mesh related
 #include <igl/read_triangle_mesh.h>
 #include <igl/readOBJ.h>
+#include <igl/pathinfo.h>
 #include <igl/writeOFF.h>
 #include <igl/writeDMAT.h>
 #include <igl/readDMAT.h>
@@ -1025,22 +1026,34 @@ bool PupSkin::load_mesh(const std::string filename)
   using namespace igl;
   using namespace Eigen;
   {
-    MatrixXd CN;
-    MatrixXi FTC,FN;
-    if(!readOBJ(filename,m.dgetV(),m.dgetTC(),CN,m.dgetF(),FTC,FN))
     {
-      if(!read_triangle_mesh(filename,m.dgetV(),m.dgetF()))
+      string d,b,e,f;
+      pathinfo(filename,d,b,e,f);
+      // Convert extension to lower case
+      std::transform(e.begin(), e.end(), e.begin(), ::tolower);
+      if(e == "obj")
       {
-        cout<<REDRUM("Reading "<<filename<<" failed.")<<endl;
-        return false;
+        MatrixXd CN;
+        MatrixXi FTC,FN;
+        if(!readOBJ(filename,m.dgetV(),m.dgetTC(),CN,m.dgetF(),FTC,FN))
+        {
+          cout<<REDRUM("Reading "<<filename<<" failed.")<<endl;
+          return false;
+        }
+      }else{
+        if(!read_triangle_mesh(filename,m.dgetV(),m.dgetF()))
+        {
+          cout<<REDRUM("Reading "<<filename<<" failed.")<<endl;
+          return false;
+        }
       }
-    }
-    if(m.getTC().rows()>0)
-    {
-      if(m.getTC().rows() != m.getV().rows())
+      if(m.getTC().rows()>0)
       {
-        cout<<REDRUM("#TC should equal #V")<<endl;
-        m.dgetTC().resize(0,2);
+        if(m.getTC().rows() != m.getV().rows())
+        {
+          cout<<REDRUM("#TC should equal #V")<<endl;
+          m.dgetTC().resize(0,2);
+        }
       }
     }
   }
