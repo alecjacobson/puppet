@@ -120,12 +120,17 @@ PupSkin::PupSkin():
   hover_next(false),
   render_count(0),
   render_to_png_on_next(false),
+  export_count(0),
+  exporting_to_png(false),
   fps(0),
   min_zoom(0.01), max_zoom(10.0),
   zoom_lock(false),angle_lock(false),is_fullscreen(false),
   should_init_lbs(false),
   mirror_mode(false),
   skinning_method(SKINNING_METHOD_LBS),
+  background_tex_id(0),
+  prefixes(),
+  prefix_in_use(0),
   flash_lights(4,1),
   scene_lights(4,2),
   mesh_is_visible(true),
@@ -298,7 +303,7 @@ bool PupSkin::init(int argc, char * argv[])
   // Turn off key repeat for user study
 
   // Default params
-  string prefix = "autosave";
+  string prefixes_str = "autosave";
   // command line options
   namespace po = boost::program_options;
   po::options_description desc("General options");
@@ -317,7 +322,8 @@ bool PupSkin::init(int argc, char * argv[])
       ("log,l",
         po::value<string>(&posing_test.m_log_filename)->implicit_value(""),
         "path to log file")
-      ("prefix,p",po::value<string>(),"project path prefix {\"./autosave\"}")
+      ("prefix,p",po::value<string>(),
+         "project path prefix(es) (comma separated) {\"./autosave\"}")
     ;
     //hidden.add_options()
     //  ("psn", po::value<string>(),"ignored")
@@ -342,7 +348,7 @@ bool PupSkin::init(int argc, char * argv[])
     }
     if(vm.count("prefix"))
     {
-      prefix = vm["prefix"].as<string>();
+      prefixes_str = vm["prefix"].as<string>();
     }
 
   }
@@ -371,8 +377,19 @@ bool PupSkin::init(int argc, char * argv[])
     cout<<GREENGIN("Puppet initialized properly...")<<endl;
   }
   init_anttweakbar();
+  // split on commas, http://stackoverflow.com/a/11719617/148668
+  {
+    std::istringstream ss(prefixes_str);
+    std::string token;
+    while(std::getline(ss, token, ','))
+    {
+       prefixes.push_back(token);
+    }
+  }
+
+  assert(prefixes.size() >= 0);
   // Should come after init_anttweakbar()
-  int loaded = load(prefix,PUPSKIN_LOAD_ALL);
+  int loaded = load(prefixes[prefix_in_use],PUPSKIN_LOAD_ALL);
   if(force_rebar_in_name != "")
   {
     if(rebar.load(force_rebar_in_name.c_str()))
@@ -541,21 +558,21 @@ void PupSkin::init_anttweakbar()
     const auto & start_playingCB = [](void * clientData)
     {
       PupSkin & p = *static_cast<PupSkin*>(clientData);
-      RotationList vdQ;
-      if(p.rig_pose_from_control(vdQ))
-      {
-        if(p.rig_animation.keyframes_size()==0)
-        {
-          p.rig_animation.start_to_from_identity(vdQ);
-        }else
-        {
-          p.rig_animation.start_playing(vdQ);
-        }
-      }
+      p.start_playing();
+
     };
     rebar.TwAddButton("rig_animation_start_playing",start_playingCB,
       this,
       "label='play' group='Animation' key=a");
+    rebar.TwAddButton("rig_animation_start_exporting",
+      [](void *clientData)
+      {
+        PupSkin & p = *static_cast<PupSkin*>(clientData);
+        p.exporting_to_png = true;
+        p.start_playing();
+      },
+      this,
+      "label='export' group='Animation' key=e");
 
     const auto & get_is_recordingCB = [](void * v, void * clientData)
     {
@@ -626,6 +643,7 @@ void PupSkin::add_display_group_to_anttweakbar()
   rebar.TwAddVarCB("is_fullscreen",TW_TYPE_BOOLCPP,
     set_is_fullscreen,get_is_fullscreen,&is_fullscreen,
     "group=Display key=F");
+
   rebar.TwAddButton("next_background",
     [](void * client_data)
     {
@@ -633,6 +651,15 @@ void PupSkin::add_display_group_to_anttweakbar()
       p.next_background();
     },this,
     "group=Display label='Next background' key=ret");
+
+  rebar.TwAddButton("next_project",
+    [](void * client_data)
+    {
+      PupSkin & p = *static_cast<PupSkin*>(client_data);
+      p.next_project();
+    },this,
+    "group=Display label='Next project' key=space");
+
   rebar.TwSetParam( "Display", "opened", TW_PARAM_INT32, 1, &INT_ZERO);
 }
 
@@ -1036,6 +1063,7 @@ bool PupSkin::load_mesh(const std::string filename)
       {
         MatrixXd CN;
         MatrixXi FTC,FN;
+        m.dgetTC().resize(0,2);
         if(!readOBJ(filename,m.dgetV(),m.dgetTC(),CN,m.dgetF(),FTC,FN))
         {
           cout<<REDRUM("Reading "<<filename<<" failed.")<<endl;
@@ -1069,7 +1097,6 @@ bool PupSkin::load_mesh(const std::string filename)
   {
     should_init_lbs = true;
   }
-  ei.deinit();
   ei.init(m.getV().cast<float>(),m.getF().cast<int>());
   return true;
 }
@@ -1496,13 +1523,19 @@ bool PupSkin::rig_pose(RotationList & rdQ)
 {
   using namespace std;
   using namespace Eigen;
+  using namespace igl;
   if(!rig_pose_from_control(rdQ))
   {
     return false;
   }
   if(rig_animation.is_playing())
   {
-    rig_animation.play(rdQ);
+    const double export_framerate = 30.;
+    rig_animation.play(
+      exporting_to_png?
+      ((double)export_count)/export_framerate+rig_animation.t_start():
+        get_seconds(),
+      rdQ);
   }
   return true;
 }
@@ -1955,6 +1988,23 @@ void PupSkin::display()
     usleep(1000*1);
     render_to_png_on_next = false;
   }
+  if(exporting_to_png && rig_animation_was_playing)
+  {
+    stringstream padnum; 
+    padnum << getenv("HOME")<<"/Desktop/"<< "puppet-export-" << setw(5) << setfill('0') << export_count++ << ".png";
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT,viewport);
+    render_to_png_async(padnum.str(),viewport[2],viewport[3],true,false);
+    exporting_to_png = rig_animation.is_playing();
+    if(!exporting_to_png)
+    {
+      cout<<R"(Convert to video with:
+
+/usr/local/bin/ffmpeg -f image2 -r 30 -i ~/Desktop/puppet-export-%05d.png -r 30 -vcodec libx264 -pix_fmt yuv420p -q:vscale 0 ~/Desktop/puppet-animation.mp4
+
+)";
+    }
+  }
 
   // Draw anttweakbar
   TwDraw();
@@ -2295,26 +2345,27 @@ bool PupSkin::key(unsigned char key, int mouse_x, int mouse_y)
 
   switch(key)
   {
-    case ' ':
-      if(posing_test.finish_pose())
-      {
-        if((posing_test.cur_pose_id()+1)==(int)posing_test.poses().size())
-        {
-          // Suicide!
-          // http://www.parashift.com/c++-faq-lite/delete-this.html
-          delete this;
-          exit(0);
-        }
-        if((get_seconds() - last_space)>2)
-        {
-          posing_test.next_pose();
-          last_space = get_seconds();
-        }
-      }else
-      {
-        render_to_png_on_next = true;
-      }
-      break;
+    //// Uncomment this for testing
+    //case ' ':
+    //  if(posing_test.finish_pose())
+    //  {
+    //    if((posing_test.cur_pose_id()+1)==(int)posing_test.poses().size())
+    //    {
+    //      // Suicide!
+    //      // http://www.parashift.com/c++-faq-lite/delete-this.html
+    //      delete this;
+    //      exit(0);
+    //    }
+    //    if((get_seconds() - last_space)>2)
+    //    {
+    //      posing_test.next_pose();
+    //      last_space = get_seconds();
+    //    }
+    //  }else
+    //  {
+    //    render_to_png_on_next = true;
+    //  }
+    //  break;
     default:
       if(!TwEventKeyboardGLUT(key,mouse_x,mouse_y))
       {
@@ -2925,5 +2976,27 @@ void PupSkin::init_rig_animation_is_listening()
         rig_animation.set_is_listening(S);
       }
       break;
+  }
+}
+
+bool PupSkin::next_project()
+{
+  prefix_in_use++;
+  int loaded = load(prefixes[prefix_in_use%prefixes.size()],PUPSKIN_LOAD_ALL);
+  return loaded;
+}
+
+void PupSkin::start_playing()
+{
+  RotationList vdQ;
+  if(rig_pose_from_control(vdQ))
+  {
+    if(rig_animation.keyframes_size()==0)
+    {
+      rig_animation.start_to_from_identity(vdQ);
+    }else
+    {
+      rig_animation.start_playing(vdQ);
+    }
   }
 }

@@ -27,6 +27,7 @@ private:
   RotationList m_pose_at_start_playing;
   double m_keyframe_step;
   bool m_is_playing_to_from_identity;
+  double m_t_start;
 public:
   RigAnimation();
   const std::vector<BoneAnimation>& bone_animations() const
@@ -63,6 +64,13 @@ public:
   //   pose  pose to play *into* and record *from*
   bool update(const RotationList & pose);
   // Inputs:
+  //   t_abs  absolute time (after call to start playing)
+  //   pose  pose to play *into*
+  // Returns whether anything is playing.
+  bool play(const double t_abs, RotationList & pose);
+  // Using current time 
+  //
+  // Inputs:
   //   pose  pose to play *into*
   // Returns whether anything is playing.
   bool play(RotationList & pose);
@@ -92,6 +100,7 @@ public:
   // Inputs:
   //   S  #BE list of whether to be listening
   void set_is_listening( const VectorXb & S);
+  double t_start() const;
   public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

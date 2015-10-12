@@ -77,6 +77,8 @@ class PupSkin
     bool hover_next;
     int render_count;
     bool render_to_png_on_next;
+    int export_count;
+    bool exporting_to_png;
     double fps;
     const double min_zoom;
     const double max_zoom;
@@ -85,6 +87,8 @@ class PupSkin
     bool mirror_mode;
     SkinningMethod skinning_method;
     GLuint background_tex_id;
+    std::vector<std::string> prefixes;
+    size_t prefix_in_use;
   public:
     FourView four_view;
   private:
@@ -347,6 +351,8 @@ class PupSkin
     //   mouse_y  y position of mouse
     void mouse_wheel(int wheel, int direction, int x, int y);
     bool next_background();
+    bool next_project();
+    void start_playing();
   private:
     // Called when trying to pick drawable objects from a given mouse click
     // (location).

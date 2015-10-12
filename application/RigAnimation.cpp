@@ -8,6 +8,7 @@ RigAnimation::RigAnimation():
   m_bone_animations(),
   m_pose_at_start_playing(),
   m_keyframe_step(1),
+  m_t_start(0),
   m_is_playing_to_from_identity(false)
 {
 }
@@ -133,7 +134,7 @@ void RigAnimation::start_recording(const RotationList & pose)
 {
   using namespace igl;
   assert(pose.size() == m_bone_animations.size());
-  const double t = get_seconds();
+  m_t_start = get_seconds();
   for(auto & bone_anim : m_bone_animations)
   {
     bone_anim.is_playing = !bone_anim.is_listening;
@@ -143,7 +144,7 @@ void RigAnimation::start_recording(const RotationList & pose)
       bone_anim.keyframes.clear();
     }
     // Either playing or recording, both need rewind
-    bone_anim.t_start = t;
+    bone_anim.t_start = m_t_start;
     bone_anim.last_interval = 0;
   }
   //m_pose_at_start_playing = pose;
@@ -163,13 +164,11 @@ bool RigAnimation::update(const RotationList & pose)
   return false;
 }
 
-bool RigAnimation::play(RotationList & pose)
+bool RigAnimation::play(const double t_abs, RotationList & pose)
 {
+  using namespace std;
   using namespace igl;
   using namespace Eigen;
-  using namespace std;
-  assert(pose.size() == m_bone_animations.size());
-  const double t_abs = get_seconds(); 
   bool still_playing = false;
   for(int b = 0;b<(int)m_bone_animations.size();b++)
   {
@@ -223,6 +222,16 @@ bool RigAnimation::play(RotationList & pose)
   return still_playing;
 }
 
+bool RigAnimation::play(RotationList & pose)
+{
+  using namespace igl;
+  using namespace Eigen;
+  using namespace std;
+  assert(pose.size() == m_bone_animations.size());
+  const double t_abs = get_seconds(); 
+  return play(t_abs,pose);
+}
+
 void RigAnimation::add_to_reanttweakbar(igl::anttweakbar::ReTwBar & rebar)
 {
   using namespace igl;
@@ -273,12 +282,12 @@ void RigAnimation::start_playing(const RotationList & pose)
   using namespace igl;
   using namespace std;
   assert(pose.size() == m_bone_animations.size());
-  const double t = get_seconds();
+  m_t_start = get_seconds();
   for(auto & bone_anim : m_bone_animations)
   {
     bone_anim.is_playing = true;
     bone_anim.is_recording = false;
-    bone_anim.t_start = t;
+    bone_anim.t_start = m_t_start;
     bone_anim.last_interval = 0;
   }
   //m_pose_at_start_playing = pose;
@@ -356,4 +365,9 @@ void RigAnimation::set_is_listening( const VectorXb & S)
     auto & bone_anim = m_bone_animations[b];
     bone_anim.is_listening = S(b);
   }
+}
+
+double RigAnimation::t_start() const
+{
+  return m_t_start;
 }
