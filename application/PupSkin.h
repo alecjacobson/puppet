@@ -346,6 +346,7 @@ class PupSkin
     //   mouse_x  x position of mouse
     //   mouse_y  y position of mouse
     void mouse_wheel(int wheel, int direction, int x, int y);
+    bool next_background();
   private:
     // Called when trying to pick drawable objects from a given mouse click
     // (location).

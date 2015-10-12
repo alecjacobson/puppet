@@ -35,6 +35,7 @@
 #include "PuppetReaderCallbacks.h"
 
 #include <igl/REDRUM.h>
+#include <igl/file_exists.h>
 #include <igl/deform_skeleton.h>
 
 #include <igl/ONE.h>
@@ -388,14 +389,7 @@ bool PupSkin::init(int argc, char * argv[])
   loaded = loaded ^ PUPSKIN_LOAD_ALL;
   load("autosave",loaded);
 
-#define BACKGROUND_PNG_PATH "data/cinekid/cartoon-forest.png"
-  if(igl::png::texture_from_png(BACKGROUND_PNG_PATH,background_tex_id))
-  {
-    cout<<GREENGIN("Loaded "<<BACKGROUND_PNG_PATH<<" successfully.")<<endl;
-  }else
-  {
-    cout<<REDRUM("Loading "<<BACKGROUND_PNG_PATH<<" failed.")<<endl;
-  }
+  next_background();
 
   return true;
 }
@@ -632,6 +626,13 @@ void PupSkin::add_display_group_to_anttweakbar()
   rebar.TwAddVarCB("is_fullscreen",TW_TYPE_BOOLCPP,
     set_is_fullscreen,get_is_fullscreen,&is_fullscreen,
     "group=Display key=F");
+  rebar.TwAddButton("next_background",
+    [](void * client_data)
+    {
+      PupSkin & p = *static_cast<PupSkin*>(client_data);
+      p.next_background();
+    },this,
+    "group=Display label='Next background' key=ret");
   rebar.TwSetParam( "Display", "opened", TW_PARAM_INT32, 1, &INT_ZERO);
 }
 
@@ -2818,6 +2819,49 @@ void PupSkin::mouse_wheel(int wheel, int direction, int mouse_x, int mouse_y)
       }
     }
   }
+}
+
+bool PupSkin::next_background()
+{
+  using namespace igl;
+  using namespace std;
+  static int id = 0;
+  const auto id_to_path = [](const int id)->std::string
+  {
+    return STR("data/cinekid/background-"<<id<<".png");
+  };
+  int max_image_id = -1;
+  while(true)
+  {
+    if(file_exists(id_to_path(max_image_id+1)))
+    {
+      max_image_id++;
+    }else
+    {
+      break;
+    }
+  }
+  if(max_image_id<0)
+  {
+    cout<<REDRUM("Failed to load background; none available.")<<endl;
+    return false;
+  }
+  const std::string path = id_to_path(id%(max_image_id+1));
+
+  if(glIsTexture(background_tex_id))
+  {
+    glDeleteTextures(1,&background_tex_id);
+  }
+  if(igl::png::texture_from_png(path,background_tex_id))
+  {
+    cout<<GREENGIN("Loaded "<<path<<" successfully.")<<endl;
+    id++;
+  }else
+  {
+    cout<<REDRUM("Loading "<<path<<" failed.")<<endl;
+    return false;
+  }
+  return true;
 }
 
 bool PupSkin::pick(int mouse_x, int mouse_y, float * pixel)
