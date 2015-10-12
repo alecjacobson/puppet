@@ -563,12 +563,13 @@ void PupSkin::init_anttweakbar()
     };
     rebar.TwAddButton("rig_animation_start_playing",start_playingCB,
       this,
-      "label='play' group='Animation' key=a");
+      "label='play' group='Animation' key=w");
     rebar.TwAddButton("rig_animation_start_exporting",
       [](void *clientData)
       {
         PupSkin & p = *static_cast<PupSkin*>(clientData);
         p.exporting_to_png = true;
+        p.export_count = 0;
         p.start_playing();
       },
       this,
@@ -602,11 +603,11 @@ void PupSkin::init_anttweakbar()
     rebar.TwAddVarCB("rig_animation_is_recording",TW_TYPE_BOOLCPP,
       set_is_recordingCB,
       get_is_recordingCB,this,
-      "label='recording' group='Animation' key=@");
+      "label='recording' group='Animation' key=r");
   }
 
   rebar.TwAddButton("living_will", &living_willCB, this,
-    "label='living will' key='w' help='Save everything I know.' ");
+    "label='living will' help='Save everything I know.' ");
 }
 
 void PupSkin::add_display_group_to_anttweakbar()
@@ -761,7 +762,7 @@ void PupSkin::add_node_group_to_anttweakbar()
   rebar.TwAddButton("node_reset_all_offsets",&reset_all_offsetsCB,this,
     "group='Node' "
     "label='reset offsets' "
-    "key='r' "
+    //"key='r' "
     "help='Reset all node offsets' "
     );
   rebar.TwAddButton("node_reset_drag_arrows",&reset_all_drag_arrowsCB,this,
@@ -1991,18 +1992,35 @@ void PupSkin::display()
   if(exporting_to_png && rig_animation_was_playing)
   {
     stringstream padnum; 
-    padnum << getenv("HOME")<<"/Desktop/"<< "puppet-export-" << setw(5) << setfill('0') << export_count++ << ".png";
+    const string home = getenv("HOME");
+    const string dir = "/var/tmp/puppet-tmp/";
+    const auto & echo_system = [](const std::string cmd) -> int
+    {
+      cout<<YELLOWGIN(cmd)<<endl;
+      return system(cmd.c_str());
+    };
+    if(export_count == 0)
+    {
+      echo_system(STR("rm -rf "<<dir));
+      echo_system(STR("mkdir "<<dir));
+    }
+    const string prefix = "puppet-export-";
+    padnum << dir << prefix << setw(5) << setfill('0') << export_count++ << ".png";
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT,viewport);
     render_to_png_async(padnum.str(),viewport[2],viewport[3],true,false);
     exporting_to_png = rig_animation.is_playing();
     if(!exporting_to_png)
     {
-      cout<<R"(Convert to video with:
-
-/usr/local/bin/ffmpeg -f image2 -r 30 -i ~/Desktop/puppet-export-%05d.png -r 30 -vcodec libx264 -pix_fmt yuv420p -q:vscale 0 ~/Desktop/puppet-animation.mp4
-
-)";
+      const string output = home+"/Desktop/puppet-animation.mp4";
+      const string ffmpeg_cmd = STR(
+        "/usr/local/bin/ffmpeg -y -f image2 -r 30 -i " <<
+        dir << prefix << 
+        "%05d.png " 
+        "-vf \"scale=min(trunc(in_w/2)*2\\, 960):-2\" -r 30 -vcodec libx264 "
+        "-pix_fmt yuv420p -q:vscale 0 -crf 10 " <<
+        output);
+      echo_system(ffmpeg_cmd);
     }
   }
 
@@ -2337,7 +2355,6 @@ void PupSkin::reshape(int width, int height)
   rebar.TwSetParam( NULL, "size", TW_PARAM_INT32, 2,size);
 }
 
-static double last_space = 0;
 bool PupSkin::key(unsigned char key, int mouse_x, int mouse_y)
 {
   using namespace igl;
@@ -2349,6 +2366,7 @@ bool PupSkin::key(unsigned char key, int mouse_x, int mouse_y)
     //case ' ':
     //  if(posing_test.finish_pose())
     //  {
+    //    static double last_space = 0;
     //    if((posing_test.cur_pose_id()+1)==(int)posing_test.poses().size())
     //    {
     //      // Suicide!

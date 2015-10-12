@@ -49,7 +49,7 @@ struct Animation
       bool ret;
       if(right == (int)keyframes.size())
       {
-        assert(t > keyframes.back().first);
+        //assert(t > keyframes.back().first);
         right = left;
         f = 0;
         ret = false;
