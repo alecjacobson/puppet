@@ -134,9 +134,13 @@ ctags:
 # This requires Alec's modifed dylibbundler
 
 puppet.app: puppet data/logo/puppet.icns
+	rm -rf $@
 	build_app $^
 	cp -r data/parts/ ./$@/Contents/Resources/parts/
-	dylibbundler -od -b -x ./$@/Contents/MacOS/$< -d ./$@/Contents/libs/
+	cp -r data/cinekid/ ./$@/Contents/Resources/cinekid/
+	cp -r examples/cinekid/dino/ ./$@/Contents/Resources/cinekid/dino/
+	cp -r examples/cinekid/ikea-lamp/ ./$@/Contents/Resources/cinekid/ikea-lamp/
+	dylibbundler -of -od -b -x ./$@/Contents/MacOS/$< -d ./$@/Contents/libs/
 	install_name_tool -change @rpath/libboost_program_options.dylib  @executable_path/../libs/libboost_program_options.dylib  ./$@/Contents/MacOS/$<
 	install_name_tool -change @rpath/libmx.dylib  @executable_path/../libs/libmx.dylib  ./$@/Contents/MacOS/$<
 	install_name_tool -change @rpath/libmex.dylib  @executable_path/../libs/libmex.dylib  ./$@/Contents/MacOS/$<

@@ -41,6 +41,7 @@
 #include <igl/ONE.h>
 #include <igl/ZERO.h>
 #include <igl/EPS.h>
+#include <igl/is_dir.h>
 #include <igl/trackball.h>
 #include <igl/quat_to_mat.h>
 #include <igl/quat_mult.h>
@@ -2897,7 +2898,32 @@ bool PupSkin::next_background()
   static int id = 0;
   const auto id_to_path = [](const int id)->std::string
   {
-    return STR("data/cinekid/background-"<<id<<".png");
+    static std::string dir =
+      []()->std::string
+      {
+        const int NUM_CINEKID_DIRS = 4;
+        const char * CINEKID_DIRS[NUM_CINEKID_DIRS] = 
+        {
+          "data/cinekid/",
+          "puppet.app/Contents/Resources/cinekid/",
+          "wackeldackel.app/Contents/Resources/cinekid/",
+          "cinekid/"
+        };
+        string cinekid_dir = "";
+        for(int d = 0;d<NUM_CINEKID_DIRS;d++)
+        {
+          if(is_dir(CINEKID_DIRS[d]))
+          {
+            cinekid_dir = CINEKID_DIRS[d];
+            break;
+          }else
+          {
+            cerr<<REDRUM("Error: "<<CINEKID_DIRS[d]<<" doesn't exist.")<<endl;
+          }
+        }
+        return cinekid_dir;
+      }();
+    return STR(dir<<"/background-"<<id<<".png");
   };
   int max_image_id = -1;
   while(true)

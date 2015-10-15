@@ -172,7 +172,7 @@ static void initialize()
     if(is_dir(NODE_PARTS_DIRS[d]))
     {
       node_parts_dir = NODE_PARTS_DIRS[d];
-      continue;
+      break;
     }else
     {
       cerr<<REDRUM( "Error: "<< NODE_PARTS_DIRS[d] <<" doesn't exist.")<<endl;
