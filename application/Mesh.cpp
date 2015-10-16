@@ -5,6 +5,7 @@
 
 // Functions
 #include <igl/quat_to_mat.h>
+#include <igl/slice.h>
 #include <igl/opengl2/draw_mesh.h>
 #include <igl/opengl/report_gl_error.h>
 #include <igl/per_face_normals.h>
@@ -20,7 +21,7 @@
 
 Mesh::Mesh():
   Pickle(),
-  V(0,3),F(0,3),VN(0,3),FN(0,3),CN(0,3),name(unique_name()),
+  V(0,3),F(0,3),TCF(0,3),NF(0,3),VN(0,3),FN(0,3),CN(0,3),name(unique_name()),
   normal_type(igl::PER_VERTEX_NORMALS),
   invert_orientation(false),
   display_list_compiled(false),
@@ -126,6 +127,8 @@ void Mesh::draw()
   using namespace Eigen;
   glPushAttrib(GL_ALL_ATTRIB_BITS);
   Eigen::MatrixXd * N;
+  Eigen::MatrixXi empty(0,3);
+  Eigen::MatrixXi * NF = &empty;
   switch(normal_type)
   {
     case PER_VERTEX_NORMALS:
@@ -136,9 +139,19 @@ void Mesh::draw()
       break;
     case PER_CORNER_NORMALS:
       N = &CN;
+      if(this->NF.rows()>0)
+      {
+        NF = &this->NF;
+      }
       break;
     default:
       N = &VN;
+  }
+
+  MatrixXi * TCF = &empty;
+  if(this->TCF.rows()>0)
+  {
+    TCF = &this->TCF;
   }
 
   GLint old_ff;
@@ -153,7 +166,19 @@ void Mesh::draw()
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex_id);
   }
-  draw_mesh(dgetV(),dgetF(),*N,MatrixXd(),dgetTC());
+  draw_mesh(
+    dgetV(),
+    dgetF(),
+    *N,
+    *NF,
+    MatrixXd(0,0),
+    dgetTC(),
+    *TCF,
+    MatrixXd(0,0),
+    0,
+    MatrixXi(0,0),
+    0);
+  glPopAttrib();
   if(invert_orientation)
   {
     *N *= -1.0;
@@ -194,6 +219,14 @@ void Mesh::sort()
   VectorXi I;
   sort_triangles(getV(),getF(),FF,I);
   dgetF() = FF;
+  if(getTCF().rows() == I.rows())
+  {
+    slice(MatrixXi(getTCF()),I,1,dgetTCF());
+  }
+  if(getNF().rows() == I.rows())
+  {
+    slice(MatrixXi(getNF()),I,1,dgetNF());
+  }
   per_face_normals(getV(),getF(),dgetFN());
   per_vertex_normals(getV(),getF(),dgetVN());
   per_corner_normals(getV(),getF(),getFN(),30.0,dgetCN());
@@ -249,6 +282,7 @@ bool Mesh::deformed_copy(
   m_def.set_invert_orientation(get_invert_orientation());
   m_def.dgetF() = getF();
   m_def.dgetTC() = getTC();
+  m_def.dgetTCF() = getTCF();
   m_def.tex_id = tex_id;
   // Do **not** copy shift, scale, camera as those are baked into lbs,dqs
   // via as_drawn()

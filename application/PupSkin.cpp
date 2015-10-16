@@ -964,7 +964,7 @@ unsigned int PupSkin::load(const std::string _prefix, const unsigned int types)
   if(types & PUPSKIN_LOAD_TEXTURE)
   {
     const string name = prefix+TEXTURE_NAME+".png";
-    if(igl::png::texture_from_png(name,m.tex_id))
+    if(igl::png::texture_from_png(name,true,m.tex_id))
     {
       cout<<GREENGIN("Reloaded "<<name<<" successfully.")<<endl;
       loaded |= PUPSKIN_LOAD_TEXTURE;
@@ -1063,10 +1063,15 @@ bool PupSkin::load_mesh(const std::string filename)
       std::transform(e.begin(), e.end(), e.begin(), ::tolower);
       if(e == "obj")
       {
-        MatrixXd CN;
-        MatrixXi FTC,FN;
         m.dgetTC().resize(0,2);
-        if(!readOBJ(filename,m.dgetV(),m.dgetTC(),CN,m.dgetF(),FTC,FN))
+        if(!readOBJ(
+          filename,
+          m.dgetV(),
+          m.dgetTC(),
+          m.dgetCN(),
+          m.dgetF(),
+          m.dgetTCF(),
+          m.dgetNF()))
         {
           cout<<REDRUM("Reading "<<filename<<" failed.")<<endl;
           return false;
@@ -1078,14 +1083,14 @@ bool PupSkin::load_mesh(const std::string filename)
           return false;
         }
       }
-      if(m.getTC().rows()>0)
-      {
-        if(m.getTC().rows() != m.getV().rows())
-        {
-          cout<<REDRUM("#TC should equal #V")<<endl;
-          m.dgetTC().resize(0,2);
-        }
-      }
+      //if(m.getTC().rows()>0)
+      //{
+      //  if(m.getTC().rows() != m.getV().rows())
+      //  {
+      //    cout<<REDRUM("#TC should equal #V or #F*3")<<endl;
+      //    m.dgetTC().resize(0,2);
+      //  }
+      //}
     }
   }
   cout<<GREENGIN("Read "<<filename<<" successfully.")<<endl;
@@ -1134,14 +1139,17 @@ bool PupSkin::load_skeleton(const std::string filename)
   m.unrelative_to_mesh(C);
   cout<<GREENGIN("Read "<<filename<<" successfully.")<<endl;
   mouse.set_size(BE.rows());
-  if(cpu_lbs && get_const_root())
+  if(cpu_lbs)
   {
-    // Match to rig skeleton
-    MatrixXd dC;
-    MatrixXi dBE;
-    VectorXi dP,dRP;
-    Node::matlab(get_const_root(),true,dC,dBE,dP,dRP);
-    match_skeletons(C,BE,dC,dBE,nodes_to_rig);
+    if(get_const_root())
+    {
+      // Match to rig skeleton
+      MatrixXd dC;
+      MatrixXi dBE;
+      VectorXi dP,dRP;
+      Node::matlab(get_const_root(),true,dC,dBE,dP,dRP);
+      match_skeletons(C,BE,dC,dBE,nodes_to_rig);
+    }
     if(BE.rows() != (int)rig_animation.bone_animations().size())
     {
       rig_animation.clear(BE.rows());
@@ -1252,6 +1260,10 @@ void PupSkin::set_cpu_lbs(const bool v)
   cpu_lbs = v;
   if(cpu_lbs)
   {
+    if(BE.rows() != (int)rig_animation.bone_animations().size())
+    {
+      rig_animation.clear(BE.rows());
+    }
     auto_fit_activated = false;
   }
 }

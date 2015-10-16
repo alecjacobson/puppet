@@ -24,7 +24,7 @@ class Mesh : public Pickle
 {
   private:
     Eigen::MatrixXd V;
-    Eigen::MatrixXi F;
+    Eigen::MatrixXi F,NF,TCF;
     // Per vertex normals
     Eigen::MatrixXd VN;
     // Per face normals
@@ -74,6 +74,8 @@ class Mesh : public Pickle
     // Const getters
     const Eigen::MatrixXd & getV() const{ return V;}
     const Eigen::MatrixXi & getF() const{ return F;}
+    const Eigen::MatrixXi & getTCF() const{ return TCF;}
+    const Eigen::MatrixXi & getNF() const{ return NF;}
     const Eigen::MatrixXd & getTC() const{ return TC;}
     const Eigen::MatrixXd & getVN() const{ return VN;}
     const Eigen::MatrixXd & getFN() const{ return FN;}
@@ -84,6 +86,8 @@ class Mesh : public Pickle
     // should be recompiled
     Eigen::MatrixXd & dgetV() { display_list_compiled = false; return  V;}
     Eigen::MatrixXi & dgetF() { display_list_compiled = false; return  F;}
+    Eigen::MatrixXi & dgetTCF() { display_list_compiled = false; return  TCF;}
+    Eigen::MatrixXi & dgetNF() { display_list_compiled = false; return  NF;}
     Eigen::MatrixXd & dgetTC() { display_list_compiled = false; return  TC;}
     Eigen::MatrixXd & dgetVN(){ display_list_compiled = false; return VN;}
     Eigen::MatrixXd & dgetFN(){ display_list_compiled = false; return FN;}
