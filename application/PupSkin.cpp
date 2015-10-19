@@ -2027,7 +2027,7 @@ void PupSkin::display()
     {
       const string output = home+"/Desktop/puppet-animation.mp4";
       const string ffmpeg_cmd = STR(
-        "/usr/local/bin/ffmpeg -y -f image2 -r 30 -i " <<
+        "/usr/bin/time /usr/local/bin/ffmpeg -threads 0 -y -f image2 -r 30 -i " <<
         dir << prefix << 
         "%05d.png " 
         "-vf \"scale=min(trunc(in_w/2)*2\\, 960):-2\" -r 30 -vcodec libx264 "
