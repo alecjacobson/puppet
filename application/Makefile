@@ -10,7 +10,8 @@ gg=g++
 # Boost with macports is built with gcc-apple and doesn't work with any proper g++
 #gg=g++-apple-4.2
 
-CFLAGS+=-Wno-deprecated-declarations
+# -fno-objc-arc  seems to at least hide if not fix some memory bug
+CFLAGS+=-Wno-deprecated-declarations -fno-objc-arc
 RELEASE_CFLAGS=-std=c++11 -g -O3 -Wall -Wextra -Wno-reorder -Wno-unknown-pragmas -D_RELEASE -msse4.2 -DIGL_STATIC_LIBRARY
 DEBUG_CFLAGS=-std=c++11 -g -ggdb -O0 -Wall -Wextra -Wno-reorder -Wno-unknown-pragmas -D_DEBUG -msse4.2 -fstack-protector-all -DIGL_STATIC_LIBRARY
 CFLAGS+=${RELEASE_CFLAGS}

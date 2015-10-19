@@ -156,6 +156,7 @@ class PupSkin
       NUM_CONTROL_TYPES = 2
     } control_type;
     bool correct_relative_frames;
+    FourView four_view_on_export;
     PupSkin();
     ~PupSkin();
     /////////////////////////////////////////////////////////////////////////

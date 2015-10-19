@@ -569,6 +569,13 @@ void PupSkin::init_anttweakbar()
       [](void *clientData)
       {
         PupSkin & p = *static_cast<PupSkin*>(clientData);
+        p.four_view_on_export = p.four_view;
+        // Shrink viewport temporarily
+        const int min_w = 960;
+        const int min_h = 540;
+        p.four_view.reshape(
+          min(min_w,p.four_view.width()),
+          min(min_h,p.four_view.height()));
         p.exporting_to_png = true;
         p.export_count = 0;
         p.start_playing();
@@ -1544,7 +1551,8 @@ bool PupSkin::rig_pose(RotationList & rdQ)
   }
   if(rig_animation.is_playing())
   {
-    const double export_framerate = 30.;
+    // Values between 5 and 60 are reasonable
+    const double export_framerate = 20.;
     rig_animation.play(
       exporting_to_png?
       ((double)export_count)/export_framerate+rig_animation.t_start():
@@ -1981,6 +1989,10 @@ void PupSkin::display()
     //const float GREY[3] = {190.0/255.0,190.0/255.0,190.0/255.0};
     const float WHITE[3] = {1.,1.,1.};
     glClearColor(WHITE[0],WHITE[1],WHITE[2],0);
+    if(exporting_to_png)
+    {
+      glClearColor(0,0,0,0);
+    }
   }
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -2025,6 +2037,7 @@ void PupSkin::display()
     exporting_to_png = rig_animation.is_playing();
     if(!exporting_to_png)
     {
+      four_view = four_view_on_export;
       const string output = home+"/Desktop/puppet-animation.mp4";
       const string ffmpeg_cmd = STR(
         "/usr/bin/time /usr/local/bin/ffmpeg -threads 0 -y -f image2 -r 30 -i " <<
@@ -2038,7 +2051,10 @@ void PupSkin::display()
   }
 
   // Draw anttweakbar
-  TwDraw();
+  if(!exporting_to_png)
+  {
+    TwDraw();
+  }
 
   {
     static double last_display_t = get_seconds_hires();
@@ -2256,6 +2272,7 @@ void PupSkin::draw_scene()
   using namespace Eigen;
 
   // Draw background
+  glViewport(0,0,four_view.width(),four_view.height());
   glPushMatrix();
   glPushAttrib(GL_ALL_ATTRIB_BITS);
   glLoadIdentity();
