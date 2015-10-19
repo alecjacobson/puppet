@@ -178,7 +178,6 @@ void Mesh::draw()
     0,
     MatrixXi(0,0),
     0);
-  glPopAttrib();
   if(invert_orientation)
   {
     *N *= -1.0;
